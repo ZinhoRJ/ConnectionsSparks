@@ -1,46 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connections Sparks</title>
-    <link rel="stylesheet" href="/css/index.css">
+<div class="author">
+    <h1 class="author__heading">Olá!</h1>
+    <a href="/criar" class="button">Adicionar Novo Perfil</a>
+    <p class="author__body">Esse é um teste para a FECIP, aprecie essa imagem:</p>
+</div>
 
-</head>
-<body>
+<img src="img/1.jpeg" alt="mae" class="hero-image" width="500" height="500" a>
+<p class="disclaimer-roubo">(o resto do site é só o css que eu roubei de alguém)</p>
+<link rel="stylesheet" href="/css/style.css">
 
-    <ul>
-        <li><a href="/contato">Contato</a></li>
-        <li><a href="/sobre">Sobre nós</a></li>
-        <li><a href="/projeto">Projeto</a></li>
-    </ul>
+<section class="articles">
+    <h2 class="articles__heading">Últimos posts</h2>
 
-    <h2>Conheça novas pessoas, faça <span>amigos</span> e 
-        <br>
-        encontre <span>conexões</span> <span>significativas</span> de 
-        <br>
-        forma interativa.
-    </h2>
+    <ul class="article-ul">
+        <% data.forEach(post => { %>
+          <li>
+            <a href="/post/<%= post._id %>">
+              <span><%= post.title %></span>
+              <span class="article-list__date"><%= post.createdAt.toDateString() %></span>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
 
-    <form action="/submit" method="post">
-        <div>
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha" required>
-        </div>
-        <div>
-            <label for="confirmarSenha">Confirmar Senha:</label>
-            <input type="password" id="confirmarSenha" name="confirmarSenha" required>
-        </div>
-        <div>
-            <a href="/registro" class="a2">Cadastrar</a>
-        </div>
-    </form>
-    <div class="simb1"></div>
-    <div class="simb2"></div>
-</body>
-</html>
+    <% if (nextPage !== null) { %>
+        <a href="/?page=<%= nextPage %>" class="pagination">&lt; Ver posts mais velhos</a>
+    <% } %>
+</section>

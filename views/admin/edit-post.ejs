@@ -1,0 +1,24 @@
+<a href="/dashboard">&larr; Voltar</a>
+<div class="admin-title">
+    <h2>Ver / Edit Perfil</h2>
+
+    <form action="/delete-post/<%= data._id %>?_method=DELETE" method="POST">
+        <input type="submit" value="Delete" class="btn-delete btn">
+    </form>
+</div>
+
+<form action="/edit-post/<%= data._id %>?method=POST" method="POST">
+    <label for="title"><b>Nome</b></label>
+    <input type="text" placeholder="Título do post" name="title" value="<%= data.title %>">
+
+    <label for="body"><b>Bio</b></label>
+    <textarea name="body" coLs="50" rows="10"><%= data.body %></textarea>
+
+    <label for="insta"><b>Instagram</b></label>
+    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>">
+
+    <label for="insta"><b>Sexo</b></label>
+    <input type="text" placeholder="-" name="sexo" value="<%= data.sexo %>">
+
+    <input type="submit" value="Update" class="btn">
+</form>

@@ -1,0 +1,11 @@
+<h1><%= data.title %></h1>
+
+<h4>Instagram: <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank" rel="noopener noreferrer"> <%= data.insta %></a></h4>
+
+<h4>Nascimento: <%= data.nascimento %> </h4>
+<h4>Sexo: <%= data.sexo %> </h4>
+<h4>Criado em: <%= data.createdAt.toDateString() %> </h4>
+
+<article class="article">
+    <%= data.body %>
+</article>
