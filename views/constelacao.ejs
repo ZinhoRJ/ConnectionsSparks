@@ -1,0 +1,18 @@
+<h1>Constelação de <%= data.title %></h1>
+<h3>Aqui você vê todas as conexões que você tem com os outros Sparks!</h2>
+
+<section class="articles">
+  <h2 class="articles__heading">Pessoas com os mesmos interesses que você:</h2>
+
+  <ul class="article-ul">
+    <% data2.forEach(post => { %>
+
+      <li>
+        <a href="/post/<%= post._id %>">
+          <span><%= post.title %></span>
+          <span class="article-list__date"><%= post.createdAt.toDateString() %></span>
+        </a>
+      </li>
+    <% }) %>
+    </ul>
+</section>

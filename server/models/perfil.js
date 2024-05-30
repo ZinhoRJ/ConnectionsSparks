@@ -25,6 +25,9 @@ const PerfilSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    tags: {
+        type: String
     }
 });
 

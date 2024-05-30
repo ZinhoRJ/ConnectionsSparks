@@ -5,7 +5,44 @@
 <h4>Nascimento: <%= data.nascimento %> </h4>
 <h4>Sexo: <%= data.sexo %> </h4>
 <h4>Criado em: <%= data.createdAt.toDateString() %> </h4>
+<h4>Interesses: <%= data.tags %></h4>
+<h4 class="id">ID: <%= data._id %></h4>
 
 <article class="article">
     <%= data.body %>
 </article>
+
+
+
+<h1></h1>
+<a href="/interesses/<%= data.id %>">[!] EDITAR TAGS [!]</a>
+
+<a href="/verify/<%= data.id %>">[@] VER CONSTELAÇÃO [@]</a>
+
+<form action="/post/<%= data.id %>" method="POST">
+    <h3>DEIXAR COMENTÁRIO:</h3>
+    <label for="assinatura"><b>Assinatura:</b></label> <font color="grey">(opcional)</font>
+    <input type="text" id="assinatura" name="assinatura">
+     
+    <label for="texto"><b>Seu Comentário Aqui:</b></label>
+    <textarea name="texto" coLs="50" rows="5"></textarea>
+
+    <input type="submit" value="Adicionar" class="btn">
+</form>
+
+
+
+<h3>COMENTÁRIOS:</h3>
+<ul class="article-ul">
+    <% comentarios2.forEach(comentario => { %>
+        <% if (comentario.idResposta === data.id) { %>
+            <div>
+                <span>NOME: <b><%= comentario.assinatura %></b> <||> <%= comentario._id %> ==> <%= comentario.idResposta %></span> <br>
+                <span><%= comentario.texto %></span>
+            </div>
+            <h3></h3>
+        <% } %>
+        
+    <% }) %>
+</ul>
+
