@@ -2,29 +2,31 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const User = require("../models/user");
+const Comentario = require("../models/comentarios");
 const bcrypt = require("bcrypt"); // encriptador de senhas
 const jwt = require("jsonwebtoken"); // token para o usuário logado, ficará salvo nos cookies
 
-const adminLayout = "../views/layouts/admin";
-const jwtSecret = process.env.JWT_SECRET;
+const adminLayout = "../views/layouts/admin"; //define o layout das páginas como o de admin, pra ficar diferente do layout de usuário comum
+const jwtSecret = process.env.JWT_SECRET; //senha para transações de cookies, sem ela, todas as senhas ficam vulneráveis
 
 // PORTEIRO:
-// Verifica se o usuário já está logado, antes de deixar entrar em alguma rota
+// Verifica se o usuário já está logado, antes de deixar entrar em alguma rota especial de admin
 const authMiddleware = (req, res, next ) => {
-    const token = req.cookies.token; //variável que vai pegar o token da sessão atual
+    const token = req.cookies.token; //variável que vai pegar o token da sessão atual (cookies)
 
     if(!token) { // (!) é o operador de negação, então caso não tenha token, significa que não tá logado
         return res.status(401).json( { message: "Não Autorizado!" } );
     }
 
     try {
-        const decoded = jwt.verify(token, jwtSecret);
-        req.userId = decoded.userId;
-        next();
+        const decoded = jwt.verify(token, jwtSecret); //vai decodificar o cookie
+        req.userId = decoded.userId; //salva o cookie
+        next(); //libera a passagem
     } catch (error) {
         return res.status(401).json( { message: "Não Autorizado!" } );
-    }
-}
+    } //neste caso, não é que ele foi desautorizado, mas definimos todos os erros como "falta de autorização" pra confundir possíves penetras e hackers
+}//é uma medida de segurança dos dados e a melhor forma de evitar o acesso de terceiros
+//também podiamos usar esse sistema pra gerar contas de usuários, mas isso em larga escala deixaria a plataforma pesada, lenta e mais complexa
 
 
 // GET !
@@ -90,7 +92,9 @@ router.get("/dashboard", authMiddleware, async (req, res) => {
 });
 
 
-// admin - create new post
+// ISSO NÃO ENTRA NO PROJETO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// admin - Criar novo Post
+// isso se torna não muito útil no projeto real
 router.get("/add-post", authMiddleware, async (req, res) => {
     try {
         const locals = {
@@ -108,7 +112,8 @@ router.get("/add-post", authMiddleware, async (req, res) => {
 
 })
 
-
+// isso também meio que vai ir embora
+// mas vamos precisar de primeira pra registrar as senhas
 // Admin - Registrar
 router.post('/register', async (req, res) => {
     try {
@@ -175,18 +180,22 @@ router.post("/add-post", authMiddleware, async (req, res) => {
 // Admin: editar post
 router.get('/edit-post/:id', authMiddleware, async (req, res) => {
     try {
-  
+
       const locals = {
         title: "Edit Post",
         description: "User Management System",
       };
   
       const data = await Post.findOne({ _id: req.params.id });
-  
+      const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
+      const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]);
+
       res.render('admin/edit-post', {
         locals,
         data,
-        layout: adminLayout
+        layout: adminLayout,
+        comentarios,
+        comentarios2
       })
   
     } catch (error) {
@@ -225,7 +234,18 @@ router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
       console.log(error);
     }
   
-  });
+});
+
+// DELETE
+// Admin: deletar comentários
+router.delete('/deletar-comentario/:id', authMiddleware, async (req, res) => {
+    try {
+        await Comentario.deleteOne( { _id: req.params.id } );
+        res.redirect(`/dashboard`);
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 /**
  * GET /

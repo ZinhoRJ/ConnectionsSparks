@@ -145,7 +145,7 @@ router.post('/post/:id', async (req, res) => {
 
         await Comentario.create(novoComentario);
         
-        res.redirect(`/`)
+        res.redirect(`/post/${req.params.id}`);
         
     } catch (error) {
         console.log(error);
@@ -220,6 +220,7 @@ router.post("/search", async (req, res) => {
 
     }
 })
+
 
 /*DUMMY
 function inserirInfoPost () {

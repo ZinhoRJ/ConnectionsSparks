@@ -22,3 +22,22 @@
 
     <input type="submit" value="Update" class="btn">
 </form>
+
+<div>
+    <h2>Ver / Editar Comentários</h2>
+    
+    <div>
+        <% comentarios2.forEach(comentario => { %>
+            <% if (comentario.idResposta === data.id) { %>
+                <div>
+                    <span>NOME: <b>ID: <%= comentario.assinatura %></b> <||> idResposta: <%= comentario._id %> ==> <%= comentario.idResposta %></span> <br>
+                    <span><%= comentario.texto %></span> <br>
+                    <form action="/deletar-comentario/<%= comentario._id %>?_method=DELETE" method="POST">
+                        <input type="submit" value="Deletar" class="btn-delete btn">
+                    </form>
+                </div>
+                <h3></h3>
+            <% } %>
+        <% }) %>    
+    </div>
+</div>
