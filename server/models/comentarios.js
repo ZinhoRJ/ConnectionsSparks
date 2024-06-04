@@ -13,7 +13,8 @@ const Comentario = new Schema({
     },
     imagem: {
         type: String,
-        default: "../public/img/1"
+        required: true,
+        default: "/img/user.png"
     },
     idResposta: {
         type: String

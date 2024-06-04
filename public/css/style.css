@@ -344,3 +344,21 @@ img {
   display: flex;
   text-align: center;
 }
+
+.foto-perfil {
+  max-height: 100px;
+  max-width: 100px;
+  filter: drop-shadow(0px 44px 34px rgba(0, 0, 0, 0.25));
+  overflow: hidden;
+  border-radius: var(--border-radius);
+}
+
+.nome-perfil {
+  font-size: var(--font-size-lg);
+
+}
+
+#HASH {
+  display: flex;
+  justify-content: space-between;
+}

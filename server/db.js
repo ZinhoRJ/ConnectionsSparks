@@ -3,7 +3,7 @@ const connectDB = async () => {
     try {
         mongoose.set ("strictQuery", false);
         const conn = await mongoose.connect(process.env.MONGODB_URI);
-        console.log(`Banco de dados MongoDB conectado ${conn.connection.host}`);
+        console.log(`Banco de dados MongoDB conectado: ${conn.connection.host}`);
     } catch (error) {
         console.log(error);
     }

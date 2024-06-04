@@ -55,7 +55,9 @@ router.get('/verify/:id', async (req, res) => {
         const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
 
         const data2 = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
-        console.log(data2);
+        console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
+
+
 
         const locals = {
             title: data.title,
