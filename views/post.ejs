@@ -5,17 +5,35 @@
 </div>
 
 
-<h4>Instagram: <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank" rel="noopener noreferrer">@<%= data.insta %></a></h4>
 
-<h4>Nascimento: <%= data.nascimento %> </h4>
-<h4>Sexo: <%= data.sexo %> </h4>
-<h4>Criado em: <%= data.createdAt.toDateString() %> </h4>
-<h4>Interesses: <%= data.tags %></h4>
-<h4 class="id">ID: <%= data._id %></h4>
+<div> 
+    <p> <b>Instagram: </b> <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank" rel="noopener noreferrer">@<%= data.insta %></a> </p>
 
-<article class="article">
-    <%= data.body %>
-</article>
+    <p>
+        <b>Sexo:</b>
+        <%= data.sexo %>
+    </p>
+        
+    <p> <b> Interesses: </b> <%= data.tags %></p>
+        
+    <p> <b> Nascimento: </b> <%= data.nascimento %> </p>
+
+    <b>Biografia:</b>
+    <article class="article">
+        <%= data.body %>
+    </article>    
+</div>
+
+
+
+
+<h1></h1>
+<div> 
+    INFORMAÇÕES DE DIAGNÓSTICO:<br>
+    <b> ID: </b> <%= data._id %> <br>
+    <b> Criado em: </b> <%= data.createdAt.toDateString() %>
+</div>
+
 
 
 
@@ -24,17 +42,23 @@
 
 <a href="/verify/<%= data.id %>">[@] VER CONSTELAÇÃO [@]</a>
 
+
+
+
 <form action="/post/<%= data.id %>" method="POST">
     <h3>DEIXAR COMENTÁRIO:</h3>
-    <label for="assinatura"><b>Assinatura:</b></label> <font color="grey">(opcional)</font>
-    <input type="text" id="assinatura" name="assinatura">
-     
-    <label for="texto"><b>Seu Comentário Aqui:</b></label>
-    <textarea name="texto" coLs="50" rows="5"></textarea>
+    
+    <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey">(opcional)</font>
+    <input type="text" id="assinatura" name="assinatura" maxlength="50">
+
+    <label for="texto"><b>Seu Comentário Aqui:</b></label> <div id="contador"></div>
+    <textarea name="texto" id="texto" coLs="50" rows="4" maxlength="200" oninput="atualizarContador()" style="resize:none;"></textarea>
 
     <input type="submit" value="Adicionar" class="btn">
-</form>
 
+    PARA NÃO PERDER
+    
+</form>
 
 
 <h3>COMENTÁRIOS:</h3>
@@ -45,13 +69,26 @@
                 <div class="foto-perfil" >
                     <img src='<%= comentario.imagem %>' class="foto-perfil">
                 </div> ^- Foto de perfil <br>
+
                 <span>NOME: <b><%= comentario.assinatura %></b> <br>
-                ||> ID: <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %></span> <br>
-                <span><%= comentario.texto %></span> <br>
+                ||> ID: <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %>
+                </span> <br>
+
+                <span>
+                    <%= comentario.texto %>
+                </span> <br>
             </div>
-            <h5></h5>
+
+            <h5></h5>      
         <% } %>
-        
     <% }) %>
 </ul>
 
+<script>
+    function atualizarContador() { //contador de letras dos comentários!
+            var input = document.getElementById('texto');
+            var contador = document.getElementById('contador');
+            var caracteresRestantes = 250 - input.value.length;
+            contador.textContent = "Caracteres restantes: " + caracteresRestantes + "/250";
+    };
+</script>

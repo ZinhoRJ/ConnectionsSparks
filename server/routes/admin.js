@@ -80,7 +80,7 @@ router.get("/dashboard", authMiddleware, async (req, res) => {
             description: "Painel do Administrador"
         }
 
-        const data = await Post.find();
+        const data = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
         res.render("admin/dashboard", {
             locals,
             data,

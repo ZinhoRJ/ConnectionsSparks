@@ -1,9 +1,13 @@
 <div class="admin-title">
     <h2>Posts</h2>
-    <a href="/add-post" class="button">+Add New</a>
+    <a href="/add-post" class="button">+ Adicionar Perfil - via Admin</a>
 </div>
 
 <ul class="admin-posts">
+
+    <div style="text-align: center;">
+        (Os mais recentes serão exibidos primeiro)
+    </div>
 
     <% data.forEach(post => { %>
         
@@ -16,7 +20,7 @@
             <a href="/edit-post/<%= post.id %>" class="btn">Editar</a>
 
             <form action="/delete-post/<%= post._id %>?_method=DELETE" method="POST">
-                <input type="submit" value="Delete" class="btn">
+                <input type="submit" value="Deletar" class="btn">
             </form>
         </div>
     <% }) %>

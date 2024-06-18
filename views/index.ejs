@@ -1,12 +1,9 @@
 <div class="author">
-    <h1 class="author__heading">Olá!</h1>
-    <a href="/criar" class="button">Adicionar Novo Perfil</a>
-    <p class="author__body">Esse é um teste para a FECIP, aprecie essa imagem:</p>
+    <h1 class="author__heading">Connections: Sparks</h1>
+    <p class="author__body">Foça parte da nossa constelação! Crie um perfil:</p>
+    <a href="/criar" class="btn">Criar Novo Perfil</a>
 </div>
 
-<img src="img/1.jpeg" alt="mae" class="hero-image" width="500" height="500" a>
-<p class="disclaimer-roubo">(o resto do site é só o css que eu roubei de alguém)</p>
-<link rel="stylesheet" href="/css/style.css">
 
 <section class="articles">
     <h2 class="articles__heading">Perfis:</h2>
@@ -15,8 +12,9 @@
         <% data.forEach(post => { %>
           <li>
             <a href="/post/<%= post._id %>">
+              <img src='/img/user.png' class="foto-perfil"> 
               <span><%= post.title %></span>
-              <span class="article-list__date"><%= post.createdAt.toDateString() %></span>
+              <span class="article-list__date">Criado em: <%= post.createdAt.toDateString() %> <p>Curtidas: 0</p></span>
             </a>
           </li>
         <% }) %>

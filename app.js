@@ -28,6 +28,7 @@ app.use(methodOverride('_method'));
 // Configurar cookies
 app.use(session({
     secret: 'cat', //"senha" pra cada sessão
+    cookie: { maxAge: 300 },
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({

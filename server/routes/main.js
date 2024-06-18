@@ -202,8 +202,10 @@ router.post("/search", async (req, res) => {
             description: "Pesquisa feita."
         }
 
+        const verificarTermosPesquisa = /[^a-zA-Z0-9áàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]/g;
+
         let searchTerm = req.body.searchTerm;
-        const searchNoSpecialChar = searchTerm.replace(/[^a-zA-Z0-9áàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]/g, "");
+        const searchNoSpecialChar = searchTerm.replace(verificarTermosPesquisa, "");
 
         const data = await Post.find({
             $or: [
