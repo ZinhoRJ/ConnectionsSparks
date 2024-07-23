@@ -1,0 +1,10 @@
+<h1>TESTE DE EXIBIÇÃO DOS GRUPOS!</h1>
+<h2><%= data.nome %></h2>
+<p><%= data.descricao %></p>
+
+<b>Estrelas:</b> <br>
+<% membro.forEach(membros => { %>
+    <a href="/post/<%= membros %>">
+        <img src='/img/user.png' class="foto-perfil" style="max-width: 6%;">
+    </a>
+<% }) %>

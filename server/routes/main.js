@@ -2,7 +2,10 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const Comentario = require("../models/comentarios");
+const Grupo = require('../models/grupos');
 
+// GET
+// CRIAR PERFIL
 router.get('/criar', async (req, res) => {
     try {
         
@@ -22,6 +25,8 @@ router.get('/criar', async (req, res) => {
     }
 });
 
+// POST
+// PERFIL (ENVIAR AO BANCO DE DADOS)
 router.post('/criar', async (req, res) => {
     try {
         try {
@@ -42,6 +47,87 @@ router.post('/criar', async (req, res) => {
         } catch (error) {
             console.log(error);
         }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// GET
+// GRUPOS
+router.get('/novogrupo', async (req, res) => {
+    try {
+        const locals = {
+            title: "Nova Constelação",
+            decription: "Tela de criação de Grupos"
+        }
+
+        const data = await Post.find();
+        const dataPerfis = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
+        
+        res.render('criarG', {
+            locals, data, dataPerfis
+        });
+        
+    } catch (error){
+        console.log(error);
+    }
+});
+// POST
+// GRUPOS
+ router.post('/novogrupo', async (req, res) => {
+     try {
+        const opcoesSelecionadas = req.body.selectedUsers; //array pra gravar os ids
+
+        const newGrupo = new Grupo({
+            nome: req.body.nomegrupo,
+            membros: opcoesSelecionadas,
+            descricao: req.body.descricao,
+        });
+
+        await Grupo.create(newGrupo);
+
+        res.redirect("/")
+        
+     } catch (error) {
+         console.log(error);
+     }
+});
+// GET
+// *VER* GRUPOS
+router.get('/listagrupos', async (req, res) => { 
+    try {
+        const locals = {
+            title: "Constelações"
+        }
+
+        //const data = await Grupo.find();
+        const grupos = await Grupo.aggregate([ {$sort: {createdAt: -1} } ]);
+
+        res.render('listagrupos', {
+            locals, grupos
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+// ṔOST
+// *EXIBIR UM* GRUPO
+router.get('/grupo/:id', async (req, res) => {
+    try {
+        const slug = req.params.id;
+
+        const data = await Grupo.findById({ _id: slug });
+        const data2 = Grupo.find();
+        const membro = data.membros;
+        
+
+        const locals = {
+            title: data.nome,
+        }
+        
+        res.render('grupo',{
+            locals, data, slug, membro, data2
+        });
     } catch (error) {
         console.log(error);
     }
@@ -110,7 +196,7 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         console.log(error);
     }
 
-    console.log("[ ! ] acessou a home");
+    console.log("[ ! ] Acessou a Home");
 });
 
 // GET
@@ -139,8 +225,10 @@ router.get("/post/:id", async (req, res) => {
 // Perfis - ESSE POST SÓ EXISTE POR CAUSA DOS COMENTÁRIOS, A EXIBIÇÃO DO PERFIL SÓ DEPENDE DE GET
 router.post('/post/:id', async (req, res) => {
     try {
+        const assinatura = req.body.assinatura || "Anônimo"; //essa variável vai substituir o vazio por "Anônimo", já que o moongose decidiu ignorar o default value!
+
         const novoComentario = new Comentario({
-            assinatura: req.body.assinatura,
+            assinatura: assinatura,
             texto: req.body.texto,
             idResposta: req.params.id
         });
@@ -224,6 +312,7 @@ router.post("/search", async (req, res) => {
 
     }
 })
+
 
 
 /*DUMMY

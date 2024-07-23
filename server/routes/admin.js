@@ -182,13 +182,13 @@ router.get('/edit-post/:id', authMiddleware, async (req, res) => {
     try {
 
       const locals = {
-        title: "Edit Post",
-        description: "User Management System",
+        title: "Editar Perfis",
+        description: "Admin Management System",
       };
   
       const data = await Post.findOne({ _id: req.params.id });
       const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
-      const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]);
+      const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]); //variável que vai listar os comentários no banco de dados
 
       res.render('admin/edit-post', {
         locals,
@@ -201,7 +201,6 @@ router.get('/edit-post/:id', authMiddleware, async (req, res) => {
     } catch (error) {
       console.log(error);
     }
-  
   });
 
 
@@ -236,7 +235,6 @@ router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
   
 });
 
-// DELETE
 // Admin: deletar comentários
 router.delete('/deletar-comentario/:id', authMiddleware, async (req, res) => {
     try {

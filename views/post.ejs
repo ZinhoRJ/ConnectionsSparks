@@ -46,17 +46,15 @@
 
 
 <form action="/post/<%= data.id %>" method="POST">
-    <h3>DEIXAR COMENTÁRIO:</h3>
+    <h3>DEIXE UMA MENSAGEM:</h3>
     
     <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey">(opcional)</font>
     <input type="text" id="assinatura" name="assinatura" maxlength="50">
 
-    <label for="texto"><b>Seu Comentário Aqui:</b></label> <div id="contador"></div>
+    <label for="texto"><b>Sua Mensagem:</b></label> <font color="grey"><i>Por favor, mantenha o respeito.</i></font> <div id="contador"></div> 
     <textarea name="texto" id="texto" coLs="50" rows="4" maxlength="200" oninput="atualizarContador()" style="resize:none;"></textarea>
 
-    <input type="submit" value="Adicionar" class="btn">
-
-    PARA NÃO PERDER
+    <input type="submit" value="Adicionar" class="btn">   
     
 </form>
 

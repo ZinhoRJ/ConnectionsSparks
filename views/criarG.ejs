@@ -1,0 +1,28 @@
+<html lang="pt-br">
+<body>
+<form id="formulario" action='/novogrupo' method='POST'>
+    <h1>NOVO GRUPO</h1>
+
+    <label for="nomegrupo"><b>Nome do Grupo:</b></label>
+    <input type="text" id="nomegrupo" name="nomegrupo" required>
+
+    <label for="descricao"><b>Descrição do grupo:</b></label>
+    <input type="text" id="descricao" name="descricao" required>
+
+    <h2>SELECIONE AS ESTRELAS:</h2>
+    <fieldset> <legend>Convide os usuários para este grupo:</legend>
+        
+        <% data.forEach (post => { %>
+            <label>
+                <img src="/img/user.png" class="foto-perfil" style="max-width: 6%;">
+                <input type="checkbox" name="selectedUsers" value="<%= post.id %>">
+                <%= post.title %>
+            </label> <br>
+        <% }) %>
+        <br>
+        <input type="submit" value="Criar Grupo" class="btn">            
+    </fieldset>
+</form>
+</body>
+
+</html>

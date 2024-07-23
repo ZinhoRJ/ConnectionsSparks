@@ -13,10 +13,25 @@
     </select>
 
     <label for="insta">Usuário do Instagram</label> <font color="grey">(opcional)</font>
-    <input type="text" id="instagram" name="insta">
+    <input type="text" id="instagram" placeholder="Não é necessário digitar o símbolo de arroba (@)" name="insta" onkeypress="return lettersOnly(event);">
      
     <label for="body"><b>Biografia Aqui</b></label>
     <textarea name="body" coLs="50" rows="10"></textarea>
 
-    <input type="submit" value="Add" class="btn">
+    <input type="submit" value="Criar Perfil" class="btn">
 </form>
+
+<script>
+function lettersOnly(evt) {
+    evt = (evt) ? evt : event;
+    var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
+        ((evt.which) ? evt.which : 0));
+    if (charCode > 31 && (charCode < 65 || charCode > 90) &&
+        (charCode < 97 || charCode > 122)) {
+        //alert("Não é necessário adicionar o símbolo do @."); //não gostei do alert pq ele cria um popup na tela!
+        event.preventDefault(); //esse só vai não adicionar o @ e ficar quieto
+        return false;
+    }
+    return true;
+}
+</script>

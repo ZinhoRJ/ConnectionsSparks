@@ -1,0 +1,10 @@
+<h1>CONSTELAÇÕES:</h1>
+
+<% grupos.forEach(grupo => { %>
+    <li>
+        <dt>
+            <a href='/grupo/<%= grupo._id %>'> <b><%= grupo.nome %></b> </a>
+        </dt>
+        <dd> <%= grupo.descricao %> </dd>
+    </li>
+<% }) %>

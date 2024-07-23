@@ -14,8 +14,8 @@
     <label for="body"><b>Bio</b></label>
     <textarea name="body" coLs="50" rows="10"><%= data.body %></textarea>
 
-    <label for="insta"><b>Instagram</b></label>
-    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>">
+    <label for="insta"><b>Instagram ----> SEM O @ LEMBRA DISSO!</b></label>
+    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>" onkeypress="return lettersOnly(event);">
 
     <label for="insta"><b>Sexo</b></label>
     <input type="text" placeholder="-" name="sexo" value="<%= data.sexo %>">
@@ -41,3 +41,18 @@
         <% }) %>    
     </div>
 </div>
+
+<script>
+    function lettersOnly(evt) {
+    evt = (evt) ? evt : event;
+    var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
+        ((evt.which) ? evt.which : 0));
+    if (charCode > 31 && (charCode < 65 || charCode > 90) &&
+        (charCode < 97 || charCode > 122)) {
+        //alert("Não é necessário adicionar o símbolo do @."); //não gostei do alert pq ele cria um popup na tela!
+        event.preventDefault(); //esse só vai não adicionar o @ e ficar quieto
+        return false;
+    }
+    return true;
+}
+</script>

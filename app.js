@@ -51,5 +51,5 @@ app.use("/", require("./server/routes/main")); //dizemos que vamos usar as rotas
 app.use("/", require("./server/routes/admin")); //a mesma coisa, mas com as rotas separadas para o administrador
 
 app.listen(PORT, () => { //inicia o servidor como web app, usando o express!
-    console.log(`Servidor aberto na porta ${PORT}`);
+    console.log('[ \x1b[32m OK \x1b[0m ] ' + `Servidor aberto na Porta ${PORT}`);
 })

@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 const Comentario = new Schema({
     assinatura: {
         type: String,
-        required: true,
-        default: "Anônimo",
+        default: "Anônimo"
     },
     texto: {
         type: String,
