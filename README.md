@@ -17,7 +17,7 @@ A proposta consiste de uma rede social simples que busce conectar os usários po
 A princípio usamos Html, CSS e JavaScript para o frontend, Node.js para o servidor (e diversas bibliotecas npm), além do MongoDB para o banco de dados.
 
 ### 📄 Licença
-Open-Source, sob a GNU License: uso pessoal, comercial e modificações liberadas, sob a regra de não plágio e a permanente gratuidade do software e seus derivados. Leia [LICENSE](https://github.com/ZinhoRJ/ConnectionSparks/blob/main/logotipo_provisorio.png) para mais informações.
+Open-Source, sob a GNU License: uso pessoal, comercial e modificações liberadas, sob a regra de não plágio e a permanente gratuidade do software e seus derivados. Leia [LICENSE](https://github.com/ZinhoRJ/ConnectionsSparks/blob/main/LICENSE) para mais informações.
 
 ### 🔩 O Plano do Projeto
 - [ ] Produzir uma estrutura do site onde seja possível criar cadastros, perfis, visualizá-los e "conectá-los" entre si;
