@@ -3,54 +3,18 @@ const router = express.Router();
 const Post = require("../models/post");
 const Comentario = require("../models/comentarios");
 const Grupo = require('../models/grupos');
+const Publicacao = require('../models/publicacao')
+const timeFunction = require('../dateFunc');
 
-// GET
-// CRIAR PERFIL
-router.get('/criar', async (req, res) => {
-    try {
-        
-        const locals = {
-            title: "Criar Perfil",
-            description: "Tela da criação de perfil do usuário."
-        }
+// FUNÇÃO PRA PEGAR O TEMPO
+// para ajudar nos logs!
+const currentDate = new Date();
+Date.prototype.timeNow = function () {
+    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}; //eu queria exportar isso de outro canto, mas eu não consegui, me sinto derrotado .·°՞(¯□¯)՞°·.
 
-        const data = await Post.find();
-        res.render('criarP', {
-            locals, data
-        });
-        console.log('Criando Perfil !')
 
-    } catch (error) {
-        console.log(`!!! ERRO NA EXECUÇÃO DA QUERY DE PERFIL: (${error})`)
-    }
-});
 
-// POST
-// PERFIL (ENVIAR AO BANCO DE DADOS)
-router.post('/criar', async (req, res) => {
-    try {
-        try {
-            const newPost = new Post({
-                title: req.body.title,
-                body: req.body.body,
-                insta: req.body.insta,
-                nascimento: req.body.nascimento,
-                sexo: req.body.sexo
-            });
-    
-            await Post.create(newPost); //isso é oq cria um novo perfil 
-            
-            const lastId = newPost._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
-            
-            res.redirect(`/interesses/${lastId}`);
-
-        } catch (error) {
-            console.log(error);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 // GET
 // GRUPOS
@@ -88,6 +52,7 @@ router.get('/novogrupo', async (req, res) => {
 
         res.redirect("/")
         
+        console.log(`[ DBUG ] Novo grupo criado: ${req.body.nomegrupo} às ` + currentDate.timeNow());
      } catch (error) {
          console.log(error);
      }
@@ -110,7 +75,7 @@ router.get('/listagrupos', async (req, res) => {
         console.log(error);
     }
 });
-// ṔOST
+// GET
 // *EXIBIR UM* GRUPO
 router.get('/grupo/:id', async (req, res) => {
     try {
@@ -119,6 +84,8 @@ router.get('/grupo/:id', async (req, res) => {
         const data = await Grupo.findById({ _id: slug });
         const data2 = Grupo.find();
         const membro = data.membros;
+        const publicacoes = await Publicacao.findById({ _id: slug });
+        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1 } } ]);
         
 
         const locals = {
@@ -126,36 +93,28 @@ router.get('/grupo/:id', async (req, res) => {
         }
         
         res.render('grupo',{
-            locals, data, slug, membro, data2
+            locals, data, slug, membro, data2, publicacoes, publicacoesOrdenadas
         });
     } catch (error) {
         console.log(error);
     }
 });
-
-// GET 
-// CONSTELAÇÃO
-router.get('/verify/:id', async (req, res) => {
-    try{
-        let slug = req.params.id; //vai pegar o ID do perfil (na página de exibição de perfil)
-        const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
-
-        const data2 = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
-        console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
-
-
-
-        const locals = {
-            title: data.title,
-            description: "Perfil",
-            currentRoute: `/post/${slug}`
-        }
-        
-        res.render('constelacao', {
-            locals,
-            data,
-            data2
+// POST
+// GRUPOS - ADICIONAR PUBLICAÇÃO
+router.post('/grupo/:id', async (req, res) => {
+    try {
+        const assinatura = req.body.assinatura || "Anônimo";
+        const novaPublicacao = new Publicacao({
+            titulo: req.body.titulo,
+            assinatura: assinatura,
+            texto: req.body.texto,
+            idGrupo: req.params.id
         });
+
+        await Publicacao.create(novaPublicacao);
+
+        res.redirect(`/grupo/${req.params.id}`);
+        console.log(`[ DBUG ] Nova publicação criada no grupo ${req.body.nomegrupo} às ${currentDate.timeNow()}`);
     } catch (error) {
         console.log(error);
     }
@@ -167,7 +126,7 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
     // um try n' catch desse tamanho não é ideal, eu sei, mas a forma que eu fiz o sistema de páginas (control c + v) também não é o ideal, e ambos funcionam.
     try {
         const locals = {
-            title: "Connections:Sparks",
+            title: "Connections: Sparks",
             description: "sei la sei la sei la."
         }
 
@@ -196,11 +155,58 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         console.log(error);
     }
 
-    console.log("[ ! ] Acessou a Home");
+    console.log("[ INFO ] Acessou a Home " + `às ${new Date().timeNow()})`);
 });
 
 // GET
-// Perfis
+// CRIAR PERFIL
+router.get('/criar', async (req, res) => {
+    try {
+        
+        const locals = {
+            title: "Criar Perfil",
+            description: "Tela da criação de perfil do usuário."
+        }
+
+        const data = await Post.find();
+        res.render('criarP', {
+            locals, data
+        });
+        console.log('Criando Perfil !')
+
+    } catch (error) {
+        console.log(`!!! ERRO NA EXECUÇÃO DA QUERY DE PERFIL: (${error})`)
+    }
+});
+// POST
+// PERFIL (ENVIAR AO BANCO DE DADOS)
+router.post('/criar', async (req, res) => {
+    try {
+        try {
+            const newPost = new Post({
+                title: req.body.title,
+                body: req.body.body,
+                insta: req.body.insta,
+                nascimento: req.body.nascimento,
+                sexo: req.body.sexo
+            });
+    
+            await Post.create(newPost); //isso é oq cria um novo perfil 
+            
+            const lastId = newPost._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
+            
+            res.redirect(`/interesses/${lastId}`);
+
+        } catch (error) {
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// GET
+// POST - Exibir Um Perfil
 router.get("/post/:id", async (req, res) => {
     try {
         const slug = req.params.id; // um slug é um redirecionamento de rota dinâmico, ou seja, mudaremos a rota de exibição ela dinamicamente para o perfil específico escolhido
@@ -237,6 +243,8 @@ router.post('/post/:id', async (req, res) => {
         
         res.redirect(`/post/${req.params.id}`);
         
+        console.log(`[ DBUG ] Comentário postado no perfil de ID: ${req.params.id} às ` + currentDate.timeNow());
+
     } catch (error) {
         console.log(error);
     }
@@ -252,7 +260,7 @@ router.get('/interesses/:id', async (req, res) => {
             description: "Adicionar Tags de Interesse",
         };
         
-        const data = await Post.findOne({ _id: req.params.id, languages: req.body.languages });
+        const data = await Post.findOne({ _id: req.params.id});
 
         res.render('interesses', {
             locals, 
@@ -267,17 +275,47 @@ router.get('/interesses/:id', async (req, res) => {
 // interesses - salvando os interesses escolhidos
 router.post('/interesses/:id', async (req, res) => {
     try {
-        req.body.languages = req.body.languages.map(item => (Array.isArray(item) && item[1]) || null);
-        console.log(req.body.languages);
+        //req.body.languages = req.body.languages.map(item => (Array.isArray(item) && item[1]) || null);
+        //console.log(req.body.languages);
         
         await Post.findByIdAndUpdate(req.params.id, {
-            tags: req.body.languages
+            tags: req.body.interesses
         });
 
-        //const lastId = data._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
-        res.redirect(`/`)
+        const lastId = req.params.id;  //OUTRO SLUG - QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
+        res.redirect(`/post/${lastId}`);
+        
+        console.log(`[ INFO ] Interesses atualizados para o usuário ${lastId} às ` + currentDate.timeNow());
     } catch (error) {
         console.log(error)
+    }
+});
+
+// GET 
+// CONSTELAÇÃO - juntar os interesses dos usuários
+router.get('/verify/:id', async (req, res) => {
+    try{
+        let slug = req.params.id; //vai pegar o ID do perfil (na página de exibição de perfil)
+        const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
+
+        const data2 = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
+        console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
+
+
+
+        const locals = {
+            title: data.title,
+            description: "Perfil",
+            currentRoute: `/post/${slug}`
+        }
+        
+        res.render('constelacao', {
+            locals,
+            data,
+            data2
+        });
+    } catch (error) {
+        console.log(error);
     }
 });
 
@@ -308,8 +346,9 @@ router.post("/search", async (req, res) => {
             locals
         });
 
+        console.log(`[ INFO ] Exibindo resultados de pesquisa para '${searchTerm}' às ` + currentDate.timeNow())
     } catch (error) {
-
+        console.log(error);
     }
 })
 
@@ -328,9 +367,9 @@ inserirInfoPost(); */
 
 // GET - PLAIN (normal, nada demais)
 // Sobre Nós
-router.get("/about", (req, res) => {
+router.get("/about", async (req, res) => {
     res.render('about');
-    console.log("[ * ] acessou about");
+    console.log(`[ INFO ] acessou about às ` + currentDate.timeNow());
 });
 
 module.exports = router;

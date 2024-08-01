@@ -1,31 +1,34 @@
 <form action="/interesses/<%= data._id %>?method=POST" method="POST">
 
-    <input type="submit" value="Fim" class="btn">
-
-
-<div>
-    <input type="hidden" name="option[0]" value="0">
-    <input type="hidden" name="option[1]" value="0">
-    <input type="hidden" name="option[2]" value="0">
-    <input type="checkbox" name="option[0]" value="1">
-    <input type="checkbox" name="option[1]" value="1">
-    <input type="checkbox" name="option[2]" value="1">
+<div> 
+    <input type="checkbox" name="categoria" id="aba" value="Música" onchange="abrir('abaEstilos')"> <label>Música</label> <br>
+        <div id="abaEstilos" style="display: none;">
+            -> <input type="checkbox" name="interesses" value="Música Pop"> <label>Pop</label> <br>
+            -> <input type="checkbox" name="interesses" value="Música Eletrônica"> <label>Eletrônica</label> <br>
+            -> <input type="checkbox" name="interesses" value="Rock"> <label>Rock</label> <br>
+            -> <input type="checkbox" name="interesses" value="Metal"> <label>Metal</label> <br>
+        </div>
     
-    <input type="hidden" name="languages[0]" value="english">
-    <input type="checkbox" name="languages[0]" value="english">
-    <label>english</label><br>
-
-    <input type="hidden" name="languages[1]" value="tagalog">
-    <input type="checkbox" name="languages[1]" value="tagalog" id="2">
-    <label>tagalog</label><br>
-
-    <input type="hidden" name="languages[2]" value="portuguese">
-    <input type="checkbox" name="languages[2]" value="portuguese" id="3">
-    <label>portuguese</label><br>
-  
-    <input type="submit" value="Fim" class="btn">
-    <script>
-    </script>
+    <input type="checkbox" name="categoria" id="aba" value="Bandas" onchange="abrir('abaBandas')"> <label>Bandas</label> <br>
+    <div id="abaBandas" style="display: none;">
+        -> <input type="checkbox" name="interesses" value="Tame Impala"> <label>Tame Impala</label> <br>
+        -> <input type="checkbox" name="interesses" value="Daft Punk"> <label>Daft Punk</label> <br>
+        -> <input type="checkbox" name="interesses" value="Metro Boomin"> <label>Metro Boomin</label> <br>
+        -> <input type="checkbox" name="interesses" value="Ghost"> <label>Ghost</label> <br>
+    </div>
+        
+    <input type="checkbox" name="categoria" id="aba" value="Carros"> <label>Carros</label> <br>
+    <input type="checkbox" name="categoria" id="abaCinema" value="Cinema"> <label>Cinema</label> <br>
+    <input type="checkbox" name="categoria" id="abaJogos" value="Videogames"> <label>Videogames</label> <br>
+    <input type="checkbox" name="categoria" id="abaEsportes" value="Esportes"> <label>Esportes</label> <br>
 </div>
 
+<input type="submit" value="Fim" class="btn">
+
 </form>
+
+<script>  
+    function abrir(categoria){
+        document.getElementById(categoria).style.display="flex";
+    };
+</script>

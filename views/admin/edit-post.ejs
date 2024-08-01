@@ -14,7 +14,7 @@
     <label for="body"><b>Bio</b></label>
     <textarea name="body" coLs="50" rows="10"><%= data.body %></textarea>
 
-    <label for="insta"><b>Instagram ----> SEM O @ LEMBRA DISSO!</b></label>
+    <label for="insta"><b>Instagram ----> SEM DIGITAR O @, LEMBRE DISSO!</b></label>
     <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>" onkeypress="return lettersOnly(event);">
 
     <label for="insta"><b>Sexo</b></label>
@@ -24,7 +24,7 @@
 </form>
 
 <div>
-    <h2>Ver / Editar Comentários</h2>
+    <h2>Ver / Apagar Comentários</h2>
     
     <div>
         <% comentarios2.forEach(comentario => { %>

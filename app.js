@@ -7,6 +7,9 @@ const expressLayout = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const MongoStore = require("connect-mongo");
+const http = require('http');
+const server = http.createServer(express);
+const io = require('socket.io')(server);
 const path = require("path"); //depedência de algo, mas eu não sei oq é
 
 const connectDB = require("./server/db");
@@ -50,6 +53,12 @@ app.locals.isActiveRoute = isActiveRoute;
 app.use("/", require("./server/routes/main")); //dizemos que vamos usar as rotas presentes no arquivo main.js, isso evitar ter que definir todas as rotas aqui
 app.use("/", require("./server/routes/admin")); //a mesma coisa, mas com as rotas separadas para o administrador
 
+const currentDate = new Date();
+Date.prototype.timeNow = function () {
+    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+}
+
 app.listen(PORT, () => { //inicia o servidor como web app, usando o express!
     console.log('[ \x1b[32m OK \x1b[0m ] ' + `Servidor aberto na Porta ${PORT}`);
+    console.log(`[ \x1b[32m OK \x1b[0m ] Uptime since: ` + currentDate.timeNow());
 })

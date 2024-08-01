@@ -29,6 +29,10 @@ const PostSchema = new Schema({
     tags: {
         type: Array,
         default: ""
+    },
+    curtidas: {
+        type: Number,
+        default: 0
     }
 });
 module.exports = mongoose.model("Post", PostSchema);

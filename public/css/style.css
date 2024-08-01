@@ -375,3 +375,14 @@ img {
   display: flex;
   justify-content: space-between;
 }
+
+/* Grupos  */
+.publicação-ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: clamp(1.13rem, calc(1.08rem + 0.22vw), 1.25rem);
+  display: hidden;
+  flex-direction: column;
+  background-color: #d13030;
+}

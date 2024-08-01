@@ -1,10 +1,66 @@
-<h1>TESTE DE EXIBIÇÃO DOS GRUPOS!</h1>
-<h2><%= data.nome %></h2>
+<h2 id="nomegrupo"><%= data.nome %></h2>
 <p><%= data.descricao %></p>
 
 <b>Estrelas:</b> <br>
-<% membro.forEach(membros => { %>
-    <a href="/post/<%= membros %>">
-        <img src='/img/user.png' class="foto-perfil" style="max-width: 6%;">
-    </a>
-<% }) %>
+<p>
+    <% membro.forEach(membros => { %>
+        <a href="/post/<%= membros %>">
+            <img src='/img/user.png' class="foto-perfil" style="max-width: 6%;">
+        </a>
+    <% }) %> 
+</p>
+
+<button class="btn" onclick="mostrar()">Criar Publicação</button>
+
+
+<form id="form" action="/grupo/<%= data.id %>" method="POST">
+    <div id="criarPublic" style="display: none">
+    <h3>CRIAR PUBLICAÇÃO:</h3>
+        
+    <label for="titulo" maxlenght="60"> <b>Título:</b> </label>
+    <input type="text" id="titulo" name="titulo" maxlenght="70">
+
+    <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey"><i>(Opcional)</i></font>
+    <input type="text" id="assinatura" name="assinatura" maxlength="50">
+    
+    <label for="texto"><b>Texto:</b></label> <div id="contador"></div> 
+    <textarea name="texto" id="texto" coLs="50" rows="6" maxlength="600" oninput="atualizarContador()" style="resize:none;"></textarea>
+    
+    <input type="submit" value="Adicionar" class="btn">   
+    </div>
+</form>
+
+
+<p>
+    <% publicacoesOrdenadas.forEach(publicacao => { %>
+        <div class="publicacao-ul">
+            <% if (publicacao.idGrupo === data.id) { %>
+                <p style="font-size:x-large;"><%= publicacao.titulo %></p>
+                <i><b>Por: </b><%= publicacao.assinatura %></i> <br>
+                <p><%= publicacao.texto %></p>
+            <% } %>
+        </div>
+    <% }) %>
+</p>
+
+<script>
+    var divPublicacao = document.getElementById("criarPublic");
+
+    function mostrar(){
+        divPublicacao.style.display="block";
+    }
+
+    function atualizarContador() { //contador de letras dos comentários!
+            var input = document.getElementById('texto');
+            var contador = document.getElementById('contador');
+            var caracteresRestantes = 600 - input.value.length;
+            contador.textContent = "Caracteres restantes: " + caracteresRestantes + "/600";
+    };
+
+    function atualizarCurtidas(){
+        var numero = document.getElementById('numeroCurtidas');
+
+        numero.textContent = numero + 1;
+    }
+
+</script>

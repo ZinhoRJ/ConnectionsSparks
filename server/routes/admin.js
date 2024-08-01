@@ -66,6 +66,7 @@ router.post('/admin', async (req, res) => {
 
         res.redirect("/dashboard");
 
+        console.log(`[ WARN ] Login do administrador, usuário: ${req.body.username}`)
         //res.render("admin/index", { locals, layout: adminLayout });
     } catch (error) {
         console.log(error);
