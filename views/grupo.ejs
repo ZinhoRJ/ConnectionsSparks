@@ -33,11 +33,18 @@
 
 <p>
     <% publicacoesOrdenadas.forEach(publicacao => { %>
-        <div class="publicacao-ul">
+        <div class="publicação-ul">
             <% if (publicacao.idGrupo === data.id) { %>
-                <p style="font-size:x-large;"><%= publicacao.titulo %></p>
-                <i><b>Por: </b><%= publicacao.assinatura %></i> <br>
-                <p><%= publicacao.texto %></p>
+                <p style="font-size:x-large;">
+                    <a href="/publicacao/<%= publicacao._id %>"> <%= publicacao.titulo %> </a>
+                </p>
+                <i>
+                    <b>Por: </b> <%= publicacao.assinatura %>
+                </i>
+                <br>
+                <p>
+                    <%= publicacao.texto %>
+                </p>
             <% } %>
         </div>
     <% }) %>

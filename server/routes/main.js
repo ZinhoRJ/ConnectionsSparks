@@ -53,6 +53,7 @@ router.get('/novogrupo', async (req, res) => {
         res.redirect("/")
         
         console.log(`[ DBUG ] Novo grupo criado: ${req.body.nomegrupo} às ` + currentDate.timeNow());
+
      } catch (error) {
          console.log(error);
      }
@@ -71,6 +72,7 @@ router.get('/listagrupos', async (req, res) => {
         res.render('listagrupos', {
             locals, grupos
         });
+
     } catch (error) {
         console.log(error);
     }
@@ -95,6 +97,7 @@ router.get('/grupo/:id', async (req, res) => {
         res.render('grupo',{
             locals, data, slug, membro, data2, publicacoes, publicacoesOrdenadas
         });
+
     } catch (error) {
         console.log(error);
     }
@@ -115,15 +118,60 @@ router.post('/grupo/:id', async (req, res) => {
 
         res.redirect(`/grupo/${req.params.id}`);
         console.log(`[ DBUG ] Nova publicação criada no grupo ${req.body.nomegrupo} às ${currentDate.timeNow()}`);
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// GET
+// Ver uma Publicação e seus comentários
+router.get('/publicacao/:id', async (req, res) => {
+    try {
+        const locals = {
+            title: "Publicação",
+            description: "Exibindo Publicação de Comunidade"
+        };
+        
+        const slug = req.params.id; // um slug é um redirecionamento de rota dinâmico, ou seja, mudaremos a rota de exibição ela dinamicamente para o perfil específico escolhido
+
+        const publicacao = await Publicacao.findById({ _id: slug }); //variável que vai guardar o ID do perfil que será exibido
+        const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
+        const comentariosOrdenados = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
+
+        res.render('publicacao', {
+            locals, publicacao, comentarios, comentariosOrdenados
+        });
+
+    } catch (error) {
+        console.log(error);
+    };
+});
+// POST
+// Esse post só existe para criar os novos comentários dentro de uma publicação
+router.post('/publicacao/:id', async (req, res) => {
+    try {
+        const novoComentario = new Comentario({
+            assinatura: req.body.assinatura,
+            texto: req.body.texto,
+            idResposta: req.params.id
+        });
+
+        await Comentario.create(novoComentario);
+
+        res.redirect(`/publicacao/${req.params.id}`);
+
+        console.log(`[ DBUG ] Comentário postado na publicação de ID: ${req.params.id} às ` + currentDate.timeNow());
+
     } catch (error) {
         console.log(error);
     }
 });
 
 
+
 // Rotas
 router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse caso estaremos "roteando" (sim, como um roteador) tudo e exportando até o script inicial app.js!
-    // um try n' catch desse tamanho não é ideal, eu sei, mas a forma que eu fiz o sistema de páginas (control c + v) também não é o ideal, e ambos funcionam.
     try {
         const locals = {
             title: "Connections: Sparks",
