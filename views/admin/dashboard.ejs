@@ -1,15 +1,21 @@
-<div class="admin-title">
-    <h2>Posts</h2>
-    <a href="/add-post" class="button">+ Adicionar Perfil - via Admin</a>
-</div>
-
-<ul class="admin-posts">
-
-    <div style="text-align: center;">
-        (Os mais recentes serão exibidos primeiro, aperte F3 para pesquisar - Remoções são permanentes!) 
-    </div>
+<btn class="btn" onclick="mostrarGrupos()" id="btnGrupos"><b>Gerenciar Grupos</b></btn>
+<btn class="btn" onclick="mostrarPerfis()" id="btnPerfis" style="display: none;"><b>Gerenciar Perfis</b></btn>
 
 <div id="cadaPerfil">
+
+    <div class="admin-title">
+        <h2>Perfis:</h2>
+        
+        <a href="/add-post" class="button">+ Adicionar Perfil - via Admin</a>
+    </div>
+    
+    <ul class="admin-posts">
+    
+        <div style="text-align: center;">
+            <b>Os mais recentes serão exibidos primeiro - Aperte F3 para pesquisar - Remoções são permanentes!</b>
+        </div>
+
+
     <% data.forEach(post => { %>
         
         <li>
@@ -36,8 +42,80 @@
                 </button>
                 
             </form>
+        
     <% }) %>
+    </ul>
 </div>
 
-</ul>
+
+
+
+<div id="cadaGrupo" style="display: none;">
+
+
+    <div class="admin-title">
+        <h2>Grupos:</h2>
+        
+        <a href="/add-post" class="button">+ Adicionar Grupo - via Admin</a>
+    </div>
+    
+    <ul class="admin-posts">
+    
+        <div style="text-align: center;">
+            <b>Os mais recentes serão exibidos primeiro - Aperte F3 para pesquisar - Remoções são permanentes!</b>
+        </div>
+
+
+    <% grupos.forEach(grupo => { %>
+        <li>
+            <a href="/grupo/<%= grupo._id %>">
+                <%= grupo.nome %> &nearr;
+            </a>
+        </li>
+
+        <div class="admin-post-controls">
+
+            <a href="/edit-grupo/<%= grupo._id %>" class="btn">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path fill="white" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z" />
+                </svg>
+
+                Editar
+            </a>
+            <form action="/delete-grupo/<%= grupo._id %>?_method=DELETE" method="POST">
+                <button type=submit class="btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path fill="white" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12l1.41 1.41L13.41 14l2.12 2.12l-1.41 1.41L12 15.41l-2.12 2.12l-1.41-1.41L10.59 14zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>        
+                    Deletar
+                </button>
+                
+            </form>
+        </div>
+    <% }) %>
+    </ul>
+</div>
+
+<script>
+    var grupos = document.getElementById("cadaGrupo");
+    var btnGrupos = document.getElementById("btnGrupos");
+
+    var perfis = document.getElementById("cadaPerfil");
+    var btnPerfis = document.getElementById("btnPerfis");
+
+    function mostrarGrupos(){
+        grupos.style.display="block";
+        perfis.style.display="none";
+        btnGrupos.style.display="none";
+        btnPerfis.style.display="inline";
+    };
+
+    function mostrarPerfis(){
+        perfis.style.display="block";
+        grupos.style.display="none";
+        btnPerfis.style.display="none";
+        btnGrupos.style.display="inline";
+    };
+</script>
 

@@ -2,11 +2,11 @@
     <h2>
         <%= publicacao.titulo %>
     </h2>
-    <p style="font-size:medium;">
+    <p style="font-size:larger;">
         <%= publicacao.texto %>
-    </p>
+    </p> <br>
 
-    <p>
+    <p style="font-size:medium">
         <i>
             <b>Publicado por: </b> <%= publicacao.assinatura %></i>
         </i>
@@ -39,14 +39,15 @@
         <% if (comentario.idResposta === publicacao.id) { %>
             <div>
 
-                <span>Assinatura: <b><%= comentario.assinatura %></b> <br>
-                ||> ID: <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %>
-                </span> <br>
+                
+                <span> &starf; <b><%= comentario.assinatura %></b> <br>
+                </span> 
 
                 <span>
                     <%= comentario.texto %>
                 </span> <br>
                 
+                <i style="font-size: small;"> <b>ID: </b> <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %></i>    
             </div>
 
             <h5></h5>      
@@ -76,6 +77,5 @@
         var numero = document.getElementById('numeroCurtidas');
 
         numero.textContent = numero + 1;
-    }
-
+    };
 </script>

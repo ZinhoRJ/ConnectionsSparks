@@ -190,10 +190,15 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         const nextPage = parseInt(page) + 1; // TryParse, transformando nextpage numa int
         const hasNextPage = nextPage <= Math.ceil(count /perPage);
 
+
+        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1} } ]);
+
+
         //const data = await Post.find();
         res.render('index', {
             locals,
             data,
+            publicacoesOrdenadas,
             current: page,
             nextPage: hasNextPage ? nextPage : null,
             currentRoute: "/"
@@ -203,7 +208,7 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         console.log(error);
     }
 
-    console.log("[ INFO ] Acessou a Home " + `às ${new Date().timeNow()})`);
+    //console.log("[ INFO ] Acessou a Home " + `às ${new Date().timeNow()})`);
 });
 
 // GET

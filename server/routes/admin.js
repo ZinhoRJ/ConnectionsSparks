@@ -3,8 +3,11 @@ const router = express.Router();
 const Post = require("../models/post");
 const User = require("../models/user");
 const Comentario = require("../models/comentarios");
+const Grupo = require("../models/grupos");
+const Publicacao = require("../models/publicacao");
 const bcrypt = require("bcrypt"); // encriptador de senhas
 const jwt = require("jsonwebtoken"); // token para o usuário logado, ficará salvo nos cookies
+
 
 const adminLayout = "../views/layouts/admin"; //define o layout das páginas como o de admin, pra ficar diferente do layout de usuário comum
 const jwtSecret = process.env.JWT_SECRET; //senha para transações de cookies, sem ela, todas as senhas ficam vulneráveis
@@ -81,10 +84,12 @@ router.get("/dashboard", authMiddleware, async (req, res) => {
             description: "Painel do Administrador"
         }
 
-        const data = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
+        const data = await Post.aggregate([ {$sort: {createdAt: -1} } ]); //pega os perfis no banco de dados e salva na variável data
+        const grupos = await Grupo.aggregate([ {$sort: {createdAt: -1} } ]); //pega os grupos no banco de dados e salva na variável grupos
         res.render("admin/dashboard", {
             locals,
             data,
+            grupos,
             layout: adminLayout
         });
     } catch (error) {
@@ -183,7 +188,7 @@ router.get('/edit-post/:id', authMiddleware, async (req, res) => {
     try {
 
       const locals = {
-        title: "Editar Perfis",
+        title: "Editar Perfil",
         description: "Admin Management System",
       };
   
@@ -201,11 +206,10 @@ router.get('/edit-post/:id', authMiddleware, async (req, res) => {
   
     } catch (error) {
       console.log(error);
-    }
-  });
+    };
 
-
-// PUT !
+});
+// PUT -- POST
 // Admin: editar post
 router.post('/edit-post/:id', authMiddleware, async (req, res) => {
     try {
@@ -223,7 +227,6 @@ router.post('/edit-post/:id', authMiddleware, async (req, res) => {
     }
 
 });
-
 // DELETE !
 // Admin: deletar post
 router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
@@ -234,6 +237,70 @@ router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
       console.log(error);
     }
   
+});
+
+// GET
+// Editar grupos
+router.get('/edit-grupo/:id', authMiddleware, async (req, res) => {
+    try {
+        const locals = {
+            title: "Editar Grupo",
+            description: "Sistema de Gerenciamento do Administrador"
+        };
+
+        const data = await Grupo.findOne({ _id: req.params.id });
+        const publicacao = await Publicacao.findOne({ _id: req.params.id });
+        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1 } } ]);
+
+        //const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
+        //const comentariosOrdenados = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
+
+        res.render('admin/edit-grupo', {
+            locals,
+            data,
+            layout: adminLayout,
+            publicacao, publicacoesOrdenadas
+            //comentarios, comentariosOrdenados
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+// POST
+// Editar grupos
+router.post('/edit-grupo/:id', authMiddleware, async (req, res) => {
+    try {
+        await Grupo.findByIdAndUpdate(req.params.id, {
+            nome: req.body.nome,
+            descricao: req.body.descricao
+        });
+
+        res.redirect(`/edit-grupo/${req.params.id}`);
+    } catch (error) {
+        console.log(error);
+    }
+});
+// DELETE
+// Deletar grupo
+router.delete('/delete-grupo/:id', authMiddleware, async (req, res) => {
+    try {
+        await Grupo.deleteOne( { _id: req.params.id } );
+        res.redirect("/dashboard");
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// DELETE
+// Deletar Publicações
+router.delete('/delete-publicacao/:id', authMiddleware, async (req, res) => {
+    try {
+        await Publicacao.deleteOne( { _id: req.params.id } );
+        res.redirect('back');
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 // Admin: deletar comentários

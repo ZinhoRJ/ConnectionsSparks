@@ -69,15 +69,17 @@
             <div>
                 <div class="foto-perfil" >
                     <img src='<%= comentario.imagem %>' class="foto-perfil">
-                </div> ^- Foto de perfil <br>
+                </div>
 
-                <span>NOME: <b><%= comentario.assinatura %></b> <br>
-                ||> ID: <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %>
-                </span> <br>
+                <span> &starf; <b><%= comentario.assinatura %></b>
+                     <br>
+                </span> 
 
                 <span>
                     <%= comentario.texto %>
                 </span> <br>
+
+                <i style="font-size: small;"> <b>ID: </b> <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %></i>
             </div>
 
             <h5></h5>      
