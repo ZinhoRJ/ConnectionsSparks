@@ -5,14 +5,18 @@
   <h2 class="articles__heading">Pessoas com os mesmos interesses que você:</h2>
 
   <ul class="article-ul">
-    <% data2.forEach(post => { %>
 
+
+  <% data2.forEach(post => { %>
+    <% if (perfisVerificados.includes(post._id) && post._id !== data._id) { %>
+      
       <li>
         <a href="/post/<%= post._id %>">
           <span><%= post.title %></span>
-          <span class="article-list__date"><%= post.createdAt.toDateString() %></span>
+          <span class="article-list__date">@<%= post.insta %></span>
         </a>
       </li>
-    <% }) %>
-    </ul>
+
+    <% } %>
+  <% }) %>
 </section>

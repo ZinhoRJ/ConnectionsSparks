@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router(); //biblioteca que ajuda a organizar arrays
 const Post = require("../models/post");
 const User = require("../models/user");
 const Comentario = require("../models/comentarios");

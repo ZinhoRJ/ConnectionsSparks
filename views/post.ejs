@@ -8,7 +8,9 @@
 
 
 <div> 
-    <p> <btn class="btn" onclick="atualizarCurtidas()">Curtir</btn> </p> <br>
+    <form action="/curtir/<%= data.id %>" method="POST">
+        <input type="submit" value="Curtir Perfil" class="btn"> 
+    </form>
 
     <p> <b>Instagram: </b> <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank" rel="noopener noreferrer">@<%= data.insta %></a> </p>
 
@@ -17,9 +19,9 @@
         <%= data.sexo %>
     </p>
         
-    <p> <b> Interesses: </b> <%= data.tags %></p>
+    <p> <b> Interesses: </b> <%= tagsFormatadas %></p>
         
-    <p> <b> Nascimento: </b> <%= data.nascimento %> </p>
+    <p> <b> Nascimento: </b> <%= data.nascimento.toDateString() %> </p>
 
     <b>Biografia:</b>
     <article class="article">

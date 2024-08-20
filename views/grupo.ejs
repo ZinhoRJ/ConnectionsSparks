@@ -31,24 +31,22 @@
 </form>
 
 
-<p>
-    <% publicacoesOrdenadas.forEach(publicacao => { %>
-        <div class="publicação-ul">
-            <% if (publicacao.idGrupo === data.id) { %>
-                <p style="font-size:x-large;">
-                    <a href="/publicacao/<%= publicacao._id %>"> <%= publicacao.titulo %> </a>
-                </p>
-                <i>
-                    <b>Por: </b> <%= publicacao.assinatura %>
-                </i>
-                <br>
-                <p>
-                    <%= publicacao.texto %>
-                </p>
-            <% } %>
-        </div>
-    <% }) %>
-</p>
+<% publicacoesOrdenadas.forEach(publicacao => { %>
+    <% if (publicacao.idGrupo === data.id) { %>
+    <div class="publicação-ul">
+        
+            <p style="font-size:x-large; margin-top: 0; margin-bottom: auto;">
+                <b> <a href="/publicacao/<%= publicacao._id %>"> <%= publicacao.titulo %> </a> </b>
+            <p>
+                <%= publicacao.texto %>
+            </p>
+
+            <i style="font-size: small;">
+                <b>Por: </b> <%= publicacao.assinatura %>
+            </i>
+    </div>
+    <% } %>
+<% }) %>
 
 <script>
     var divPublicacao = document.getElementById("criarPublic");

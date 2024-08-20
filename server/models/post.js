@@ -31,8 +31,11 @@ const PostSchema = new Schema({
         default: ""
     },
     curtidas: {
-        type: Number,
-        default: 0
+        type: Number
+    },
+    verificado: {
+        type: Boolean,
+        default: false
     }
 });
 module.exports = mongoose.model("Post", PostSchema);

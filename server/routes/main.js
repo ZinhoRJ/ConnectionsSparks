@@ -1,4 +1,5 @@
 const express = require("express");
+const lodash = require("lodash");
 const router = express.Router();
 const Post = require("../models/post");
 const Comentario = require("../models/comentarios");
@@ -50,7 +51,7 @@ router.get('/novogrupo', async (req, res) => {
 
         await Grupo.create(newGrupo);
 
-        res.redirect("/")
+        res.redirect("/grupo/"+newGrupo._id);
         
         console.log(`[ DBUG ] Novo grupo criado: ${req.body.nomegrupo} às ` + currentDate.timeNow());
 
@@ -191,7 +192,7 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         const hasNextPage = nextPage <= Math.ceil(count /perPage);
 
 
-        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1} } ]);
+        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1} } ]).limit(3);
 
 
         //const data = await Post.find();
@@ -268,13 +269,15 @@ router.get("/post/:id", async (req, res) => {
         const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
         const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]);
 
+        const tagsFormatadas = data.tags.join(', ') + '.';
+
         const locals = {
             title: data.title,
             description: "Perfil",
             currentRoute: `/post/${slug}` //n entendi pra que serve, não me pergunte ¯\_(ツ)_/¯
         }
 
-        res.render('post', { locals, data, comentarios, slug, comentarios2 });
+        res.render('post', { locals, data, comentarios, slug, comentarios2, tagsFormatadas });
     }
     catch (error) {
         console.log(error);
@@ -302,7 +305,17 @@ router.post('/post/:id', async (req, res) => {
         console.log(error);
     }
 })
+// POST
+// Curtir perfil
+router.post('/curtir/:id', async (req, res) => {
+    try {
+        Post.findByIdAndUpdate(req.params.id, {$inc : {curtidas : 1}});
 
+        res.redirect('back');
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 // GET
 // interesses - escolher interesses
@@ -352,9 +365,30 @@ router.get('/verify/:id', async (req, res) => {
         const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
 
         const data2 = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
-        console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
+        //console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
 
 
+        function temCincoIguais(array1, array2) {
+            // Interseção dos dois arrays: encontra os elementos comuns
+            const intersecao = lodash.intersection(array1, array2);
+          
+            // Verifica se a interseção tem pelo menos 5 elementos
+            return intersecao.length >= 5;
+        };
+
+
+        var perfisVerificados = [];
+
+        data2.forEach(perfil => {
+
+            const resultados = temCincoIguais(data.tags, perfil.tags);
+
+            if (resultados === true && perfil.tags !== undefined && perfil.tags !== null){
+                perfisVerificados.push(perfil._id);
+            };
+        });
+
+        console.log(perfisVerificados);
 
         const locals = {
             title: data.title,
@@ -365,7 +399,8 @@ router.get('/verify/:id', async (req, res) => {
         res.render('constelacao', {
             locals,
             data,
-            data2
+            data2,
+            perfisVerificados
         });
     } catch (error) {
         console.log(error);

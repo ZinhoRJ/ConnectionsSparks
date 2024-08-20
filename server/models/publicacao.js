@@ -16,6 +16,11 @@ const Comentario = new Schema({
     },
     idGrupo: {
         type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        required: true
     }
 });
 
