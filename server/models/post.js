@@ -36,6 +36,10 @@ const PostSchema = new Schema({
     verificado: {
         type: Boolean,
         default: false
+    },
+    imagem: {
+        type: String,
+        defualt: "/uploads/user.png"
     }
 });
 module.exports = mongoose.model("Post", PostSchema);

@@ -1,6 +1,7 @@
 
 <div>
-        <img src='/img/user.png' class="foto-perfil"> 
+        <img src="" class="banner-perfil">
+        <img src="<%= data.imagem %>" class="foto-perfil"> 
         <div class="nome-perfil" id="nome"><b><%= data.title %></b></div>
         Curtidas: <label type="number" id="numeroCurtidas"> <%= data.curtidas %> </label>
 </div> <br>
@@ -81,10 +82,12 @@
                     <%= comentario.texto %>
                 </span> <br>
 
-                <i style="font-size: small;"> <b>ID: </b> <%= comentario._id %> ==>  <b>idResposta:</b> <%= comentario.idResposta %></i>
+                <i style="font-size: small;"> <b>ID: </b> <%= comentario._id %> >  <b>Alvo:</b> <%= comentario.idResposta %></i>
             </div>
 
-            <h5></h5>      
+            <p></p>    
+            
+            <div style="align-self: center; color: darkgray;">- Fim -</div>
         <% } %>
     <% }) %>
 </ul>
@@ -104,3 +107,5 @@
     }
 
 </script>
+
+<img src='/img/user.png' class="foto-perfil">

@@ -6,6 +6,22 @@ const Comentario = require("../models/comentarios");
 const Grupo = require('../models/grupos');
 const Publicacao = require('../models/publicacao')
 const timeFunction = require('../dateFunc');
+const multer = require("multer");
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        cb(null,  
+ file.originalname);
+    }
+}); //MULTER
+/* const upload = multer({ storage: storage }); */
+
+const upload = multer({ dest: 'public/uploads/'});
+
 
 // FUNÇÃO PRA PEGAR O TEMPO
 // para ajudar nos logs!
@@ -15,6 +31,47 @@ Date.prototype.timeNow = function () {
 }; //eu queria exportar isso de outro canto, mas eu não consegui, me sinto derrotado .·°՞(¯□¯)՞°·.
 
 
+// GET
+// TESTE CROP IMAGE
+router.get('/crop', async (req, res) => {
+    try {
+        res.render('cropper');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.get('/pfp/:id', async (req, res) => {
+    try {
+        const locals = {
+            title: "PFP & Banner",
+            description: "Definir imagens de perfil e de baner"
+        }
+
+        const data = await Post.findOne( { _id: req.params.id } );
+
+        res.render('criarImagem', {
+            locals, data
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/pfp/:id', upload.single('image'), async (req, res) => {
+    try{
+        const newImage = await Post.findByIdAndUpdate(req.params.id, {
+            imagem: "/uploads/" + req.file.filename
+        });
+        
+        // O arquivo está em req.file
+        console.log(req.file); // Exibe informações sobre o arquivo
+        res.send({ filename: req.file.filename });
+        
+    } catch (error){
+        console.log(error);
+    };
+});
 
 
 // GET
@@ -125,6 +182,31 @@ router.post('/grupo/:id', async (req, res) => {
     }
 });
 
+router.post('/salvar-texto', async (req, res) => {
+    try {
+        const content = req.body;
+
+        const novoTexto = new Publicacao({
+            titulo: "teste",
+            texto: content,
+            assinatura: "admin",
+            idGrupo: "669fe8d0051ffd5b07afc844"
+        });
+
+        await Publicacao.create(novoTexto);
+        
+        console.log('Texto salvo com sucesso!');
+
+        res.redirect('/listagrupos');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao salvar o texto' });
+
+    }
+});
+
+
 // GET
 // Ver uma Publicação e seus comentários
 router.get('/publicacao/:id', async (req, res) => {
@@ -191,11 +273,8 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         const nextPage = parseInt(page) + 1; // TryParse, transformando nextpage numa int
         const hasNextPage = nextPage <= Math.ceil(count /perPage);
 
-
         const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1} } ]).limit(3);
 
-
-        //const data = await Post.find();
         res.render('index', {
             locals,
             data,
@@ -226,7 +305,7 @@ router.get('/criar', async (req, res) => {
         res.render('criarP', {
             locals, data
         });
-        console.log('Criando Perfil !')
+        console.log('Criando Perfil!')
 
     } catch (error) {
         console.log(`!!! ERRO NA EXECUÇÃO DA QUERY DE PERFIL: (${error})`)
@@ -234,7 +313,7 @@ router.get('/criar', async (req, res) => {
 });
 // POST
 // PERFIL (ENVIAR AO BANCO DE DADOS)
-router.post('/criar', async (req, res) => {
+router.post('/criar', upload.single('image'), async (req, res) => {
     try {
         try {
             const newPost = new Post({
@@ -244,15 +323,20 @@ router.post('/criar', async (req, res) => {
                 nascimento: req.body.nascimento,
                 sexo: req.body.sexo
             });
+
+            const verificarValorExistente = await Post.findOne({ title: req.body.title });
+            if (verificarValorExistente) {
+                return res.json({ error: 'Valor já existe no banco de dados' });
+            };
     
             await Post.create(newPost); //isso é oq cria um novo perfil 
             
-            const lastId = newPost._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
-            
-            res.redirect(`/interesses/${lastId}`);
+            const ultimoId = newPost._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
+            res.redirect(`/interesses/${ultimoId}`);
 
         } catch (error) {
             console.log(error);
+            res.send("OCORREU UM ERRO!");
         }
     } catch (error) {
         console.log(error);
@@ -269,7 +353,7 @@ router.get("/post/:id", async (req, res) => {
         const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
         const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]);
 
-        const tagsFormatadas = data.tags.join(', ') + '.';
+        const tagsFormatadas = data.tags.join(', ') + '.'; //formata o array dos interesses pra eles não aparecem bagunçados no perfil
 
         const locals = {
             title: data.title,
@@ -309,9 +393,9 @@ router.post('/post/:id', async (req, res) => {
 // Curtir perfil
 router.post('/curtir/:id', async (req, res) => {
     try {
-        Post.findByIdAndUpdate(req.params.id, {$inc : {curtidas : 1}});
+        await Post.findByIdAndUpdate(req.params.id, { $inc: { curtidas: 1 } }); //atualiza o perfil no banco de dados, incrementando 1 ao número de curtidas
 
-        res.redirect('back');
+        res.redirect('back'); //retorna para a página do perfil
     } catch (error) {
         console.log(error);
     }
@@ -326,7 +410,7 @@ router.get('/interesses/:id', async (req, res) => {
             description: "Adicionar Tags de Interesse",
         };
         
-        const data = await Post.findOne({ _id: req.params.id});
+        const data = await Post.findOne( { _id: req.params.id } );
 
         res.render('interesses', {
             locals, 
@@ -349,7 +433,7 @@ router.post('/interesses/:id', async (req, res) => {
         });
 
         const lastId = req.params.id;  //OUTRO SLUG - QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
-        res.redirect(`/post/${lastId}`);
+        res.redirect(`/pfp/${lastId}`);
         
         console.log(`[ INFO ] Interesses atualizados para o usuário ${lastId} às ` + currentDate.timeNow());
     } catch (error) {
@@ -453,7 +537,7 @@ function inserirInfoPost () {
 }
 inserirInfoPost(); */
 
-// GET - PLAIN (normal, nada demais)
+// GET
 // Sobre Nós
 router.get("/about", async (req, res) => {
     res.render('about');

@@ -1,0 +1,40 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<h2>Definir Foto de Perfil e Banner:</h2>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="image">
+    <button type="submit">Enviar</button>
+</form>
+
+<img id="previewImage" class="foto-perfil" src="<%= data.imagem %>" alt="Imagem">
+
+<script>
+    $(document).ready(function() {
+        $('#uploadForm').submit(function(event) {
+            event.preventDefault();
+
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url:  '/pfp/<%= data._id %>',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log(response);  
+
+                    // Atualizar a imagem de visualização (opcional)
+                    $('#previewImage').attr('src', '/uploads/' + response.filename); // Ajustar o caminho se necessário
+                }
+            });
+        });
+    });
+</script>
+
+<!-- imagem bla bla bla:
+
+<br>
+
+<img src="/uploads/d0b27e4564c2de031d263473ffb597f6"> -->

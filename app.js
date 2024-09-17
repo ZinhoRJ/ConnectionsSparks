@@ -9,11 +9,12 @@ const session = require('express-session');
 const MongoStore = require("connect-mongo");
 const http = require('http');
 const server = http.createServer(express);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server); // TESTE
 const path = require("path"); //depedência de algo, mas eu não sei oq é
 
 const connectDB = require("./server/db");
 const { isActiveRoute } = require("./server/helpers/routeHelpers");
+
 
 const app = express(); //toda vez que usarmos "app.algumacoisa" significa que estamos chamando o express
 const PORT = 8081 || process.env.PORT; // define a porta de conexão como local (8081) ou qualquer que seja a do host (process.env)
@@ -39,9 +40,11 @@ app.use(session({
     }),
 }));
 
-app.use(express.static("public")); //vamos usar como static os arquivos presentes na pasta public.
+app.use(express.static('public')); //vamos usar como static os arquivos presentes na pasta public.
 app.use(express.static(path.join(__dirname, 'public'))); //USAR ESSE!
 //essa vai permitir usar imagens locais em rotas do servidor, ao contrário do de cima
+
+
 
 // MiddleWare da Template Engine
 app.use(expressLayout);
