@@ -17,6 +17,10 @@ const Comentario = new Schema({
     idGrupo: {
         type: String
     },
+    idAutor: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now,

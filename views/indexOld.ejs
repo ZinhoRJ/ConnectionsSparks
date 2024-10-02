@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+<div class="author">
+<h3><% if (nomeCookie != null) { %>
+    <%= nomeCookie %>
+  <% } %>
+</h3>
+    <h1 class="author__heading">CONNECTIONS: SPARKS</h1>
+    <p class="author__body">Faça parte da nossa galáxia! Crie um perfil:</p>
+    <a href="/criar" class="btn">Criar Novo Perfil</a>
+    <a href="/novogrupo" class="btn"> NOVA CONSTELAÇÃO</a>
+    <a href="/listagrupos" class="btn"> VER CONSTELAÇÕES (grupos)</a>
+    
+    <form action="/sair" method="POST">
+          <input type="submit" value="meter o pé" class="btn">  
+    </form>
+</div>
+
+
+<section class="articles">
+    <h2 class="articles__heading" style="text-align: center;">Últimas Publicações em Grupos:</h2>
+    
+    <div class="publications">
+      <% publicacoesOrdenadas.forEach(publicacao => { %>
+        <div class="boxPublicacoes"> 
+          <a href="/publicacao/<%= publicacao._id %>"><%= publicacao.titulo %><a> <i class="material-symbols-outlined" style="font-size: 1rem;"> north_east</i> <br> 
+            <b><i>Por:</b> <%= publicacao.assinatura %> </i> <br>
+            <p class="textoBox"> <%= publicacao.texto %> </p>
+        </div>
+      <% }) %>
+    </div>
+
+
+    <h2 class="articles__heading" style="text-align: center;">Posts</h2>
+
+    <% comentariosOrdenados.forEach(comentario => { %>
+      <div class="publicação-ul">
+          
+              <p style="font-size:x-large; margin-top: 0; margin-bottom: auto;">
+                  <b> <%= comentario.assinatura %> </b>
+              <p>
+                  <%= comentario.texto %>
+              </p>
+  
+              <i style="font-size: small;">
+                  <b>Por: </b> <a href="/post/<%= comentario.idAutor %>"> 
+              </i>
+      </div>
+    <% }) %>
+
+    
+
+    <h2 class="articles__heading" style="margin-bottom: 0;">Perfis:</h2>
+
+    <ul class="article-ul">
+        <% data.forEach(post => { %>
+          <li>
+            <a href="/post/<%= post._id %>">
+              <img src='<%= post.imagem %>' class="foto-perfil"> 
+              <span class="article-list__name"><%= post.title %></span>
+              <span class="article-list__date">Criado em: <%= post.createdAt.toDateString() %> <p>Curtidas: <%= post.curtidas %></p></span>
+            </a>
+          </li>
+        <% }) %>
+      </ul>
+
+    <% if (nextPage !== null) { %>
+        <a href="/?page=<%= nextPage %>" class="pagination">&lt; Ver perfis anteriores</a>
+    <% } %>
+</section>

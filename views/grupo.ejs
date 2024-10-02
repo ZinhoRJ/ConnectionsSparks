@@ -3,16 +3,20 @@
 <h2 id="nomegrupo"><%= data.nome %></h2>
 <p><%= data.descricao %></p>
 
+<!--
 <b>Estrelas:</b> <br>
 <p>
     <% membro.forEach(membros => { %>
-        <a href="/post/<%= membros %>">
-            <img src='/img/user.png' class="foto-perfil" style="max-width: 6%;">
+        <a href="/post/<%= membro %>">
+            <!-- <img src='<%= membro.imagem %>' class="foto-perfil" style="max-width: 6%;">
+            <%= membro.title %>
         </a>
     <% }) %> 
-</p>
+</p> 
+-->
 
-<button class="btn" onclick="mostrar1()">Criar Publicação</button> <br>
+<% if (membro.includes(userid)) { %>
+    <button class="btn" onclick="mostrar1()">Criar Publicação</button> <br>
 
 
 <form id="form" action="/grupo/<%= data.id %>" method="POST">
@@ -22,8 +26,8 @@
     <label for="titulo" maxlenght="60"> <b>Título:</b> </label>
     <input type="text" id="titulo" name="titulo" maxlenght="70">
 
-    <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey"><i>(Opcional)</i></font>
-    <input type="text" id="assinatura" name="assinatura" maxlength="50">
+    <!-- <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey"><i>(Opcional)</i></font>
+    <input type="text" id="assinatura" name="assinatura" maxlength="50"> -->
     
     <label for="texto"><b>Texto:</b></label> <div id="contador"></div> 
     <textarea name="texto" id="texto" coLs="50" rows="6" maxlength="600" oninput="atualizarContador()" style="resize:none;"></textarea>
@@ -31,13 +35,7 @@
     <input type="submit" value="Adicionar" class="btn">   
     </div> <br>
 </form>
-
-
-
-<form id="form2" action="/salvar-texto" method="POST" enctype="multipart/form-data">
-    <textarea id="tinymce" name="texto"></textarea>
-    <button class="btn" type="submit">Salvar</button>
-</form>
+<% } %>
 
 
 
@@ -52,7 +50,7 @@
             </p>
 
             <i style="font-size: small;">
-                <b>Por: </b> <%= publicacao.assinatura %>
+                <b>Por: </b> <a href="/post/<%= publicacao.idAutor %>"> <%= publicacao.assinatura %> </a> 
             </i>
     </div>
     <% } %>

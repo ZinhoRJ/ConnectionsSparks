@@ -1,36 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/criarP.css">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-</head>
-<body>
 
-<form action="/perfil" method="post">
-    <h1>Criar Perfil</h1>
-    <label for="username">Nome de Usuário:</label>
-    <input type="text" id="username" name="username" required>
+<h3>SE AVENTURE NESSA REDE CÓSMICA:</h3>
 
-    <label for="birthdate">Data de Nascimento:</label>
-    <input type="date" id="birthdate" name="birthdate" required>
-
-    <label for="gender">Sexo:</label>
-    <input type="text" id="gender" name="gênero" required>
-    </select>
-
-    <label for="instagram">Usuário do Instagram:</label> <font color="grey">(opcional)</font>
-    <input type="text" id="instagram" name="instagram">
-     
-    <div class="container">
-    <label for"biotext">Escreva Sua Biografia</h1>
-    <textarea class="bio-textarea" placeholder="Escreva sua biografia aqui..."></textarea>
-</div>
+<form action="/registro" method="POST">
+    <label for="email"><b>Usuário</b></label>
+    <input type="text" placeholder="" name="email">
     
-</div>
+    <label for="senha"><b>Senha</b></label>
+    <input type="password" placeholder="" name="senha">
+    
+    <input type="submit" value="Login" class="btn">
 </form>
-<a href="/perfil">Criar Perfil</a>
-</body>

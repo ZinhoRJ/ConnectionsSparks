@@ -9,13 +9,15 @@
     </form>
 </div> <br> -->
 
-<form id="formulario "action="/criar" method="POST" autocomplete="off" enctype="multipart/form-data">    
+<form id="formulario" action="/criar/<%= data._id %>?method=POST" method="POST" autocomplete="off" enctype="multipart/form-data">    
+    <h2>Para o usuário: <%= nameCookie %></h2>
+  
     <label for="title">Nome</label>
     <input type="text" id="username" name="title" required>
 
     <div>
         <label for="nascimento">Data de Nascimento</label> 
-        <input type="date" id="birthdate" name="nascimento">
+        <input type="date" id="birthdate" name="nascimento" required>
     </div> <br>
     
     <label for="sexo">Sexo</label>
@@ -65,11 +67,11 @@ function lettersOnly(evt) {
         ((evt.which) ? evt.which : 0));
     if (charCode > 31 && (charCode < 48 || charCode > 57) &&
         (charCode < 65 || charCode > 90) &&
-        (charCode < 97 || charCode > 122))
+        (charCode < 97 || charCode > 122)) {
         //alert("Não é necessário adicionar o símbolo do @."); //não gostei do alert pq ele cria um popup na tela!
         event.preventDefault(); //esse só vai não adicionar o @ e ficar quieto
         return false;
     }
     return true;
-}
+};
 </script>

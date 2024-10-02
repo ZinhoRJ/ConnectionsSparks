@@ -1,0 +1,45 @@
+<a href="/post/<%= data._id %>">&larr; Voltar</a>
+<div class="admin-title">
+    <h2>Editar Perfil</h2>
+
+    <form action="/delete-post/<%= data._id %>?_method=DELETE" method="POST">
+        <input type="submit" value="Apagar Perfil" class="btn-delete btn">
+    </form>
+</div>
+
+<form action="/editar-perfil/<%= data._id %>?method=POST" method="POST">
+    <label for="title"><b>Nome</b></label>
+    <input type="text" placeholder="Título do post" name="title" value="<%= data.title %>">
+
+    <label for="body"><b>Biografia</b></label>
+    <textarea name="body" coLs="50" rows="10"><%= data.body %></textarea>
+
+    <label for="insta"><b>Instagram</b></label>
+    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>" onkeypress="return lettersOnly(event);">
+
+    <label for="insta"><b>Sexo</b></label>
+    <input type="text" placeholder="-" name="sexo" value="<%= data.sexo %>">
+
+    <input type="submit" value="Atualizar Perfil" class="btn">
+
+    <p>
+        O perfil está registrado no e-mail: <b><%= data.email %></b>
+    </p>
+</form>
+
+
+<script>
+    function lettersOnly(evt) {
+    evt = (evt) ? evt : event;
+    var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
+        ((evt.which) ? evt.which : 0));
+    if (charCode > 31 && (charCode < 48 || charCode > 57) &&
+        (charCode < 65 || charCode > 90) &&
+        (charCode < 97 || charCode > 122)) {
+        //alert("Não é necessário adicionar o símbolo do @."); //não gostei do alert pq ele cria um popup na tela!
+        event.preventDefault(); //esse só vai não adicionar o @ e ficar quieto
+        return false;
+    }
+    return true;
+};
+</script>

@@ -1,7 +1,8 @@
+// BIBLIOTECAS DE ROTEAMENTO E TROCA DE INFORMAÇÕES DO SITE:
 const express = require("express");
 const lodash = require("lodash");
 const router = express.Router();
-const Post = require("../models/post");
+const Post = require("../models/perfil");
 const Comentario = require("../models/comentarios");
 const Grupo = require('../models/grupos');
 const Publicacao = require('../models/publicacao')
@@ -9,7 +10,156 @@ const timeFunction = require('../dateFunc');
 const multer = require("multer");
 
 
-const storage = multer.diskStorage({
+// BIBLIOTECAS DE COOKIES E AFINS:
+const bcrypt = require("bcrypt"); // encriptador de senhas
+const jwt = require("jsonwebtoken"); // token para o usuário logado, ficará salvo nos cookies
+const jwtSecret = process.env.JWT_SECRET; //senha para transações de cookies, sem ela, todas as senhas ficam vulneráveis
+const cookieParser = require('cookie-parser');
+
+// PORTEIRO:
+const authMiddleware = (req, res, next) => {
+    const token = req.cookies.token; //variável que vai pegar o token da sessão atual (cookies)
+
+    if (!token) { // (!) é o operador de negação, então caso não tenha token, significa que não tá logado
+        //return res.status(401).json( { message: "Não Autorizado!" } );
+        return res.redirect("/login");
+    }
+
+    try {
+        const decoded = jwt.verify(token, jwtSecret); //vai decodificar o cookie
+        req.userId = decoded.userId; //salva o cookie
+        next(); //libera a passagem
+    } catch (error) {
+        res.redirect('/login');
+    } //neste caso, não é que ele foi desautorizado, mas definimos todos os erros como "falta de autorização" pra confundir possíves penetras e hackers
+}
+
+
+
+// ROTAS DO SITE
+router.get('/login', async (req, res) => {
+    try {
+        res.render('login');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/login', async (req, res) => {
+    try {
+        //pega as informações digitadas
+        const { email, senha } = req.body;
+
+        //procura o perfil no banco de dados referente ao email digitado na variável user
+        const user = await Post.findOne({ email });
+
+        //verifica se o perfil existe de fato
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        //compara a senha encriptada com a senha digitada
+        const isPasswordValid = await bcrypt.compare(senha, user.senha);
+
+        //verifica se a senha está correta
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        //o código abaixo foi deixado de lado:
+        //const token = jwt.sign({ userId: user._id }, jwtSecret );
+
+        //cria os cookies!
+        const token = await jwt.sign({
+            id: user._id,
+            nome: user.title,
+            email: user.email,
+        }, jwtSecret);
+
+        //salva o cookie "token" equivalente ao token do usuário
+        res.cookie("token", token, { httpOnly: true });
+
+        //salva o cookie "name" equivalente ao email do usuário
+        res.cookie("name", user.title, { httpOnly: true });
+
+        //salva o cookie "pfp" equivalente a foto de perfil do usuário
+        res.cookie("pfp", user.imagem, { httpOnly: true });
+
+        //salva o cookie "id" equivalente ao id do usuário
+        res.cookie("userid", encodeURIComponent(user._id), { httpOnly: true });
+
+        //redireciona para o menu iniciar
+        res.redirect("/");
+
+        console.log(`[ INFO ] Login de usuário: ${user.title}`)
+
+        //res.render("admin/index", { locals, layout: adminLayout });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// logout
+router.post('/sair', (req, res) => {
+    res.clearCookie('token'); //limpa o token do usuário
+    res.clearCookie('name'); //limpa o cookie do nome
+    res.clearCookie('userid'); //limpa o cookie do id
+    res.clearCookie('pfp'); //limpa o cookie da foto de perfil
+    res.redirect('/'); //retorna ao index
+});
+
+router.get('/registro', async (req, res) => {
+    try {
+        res.render('registro');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.post('/registro', async (req, res) => {
+    try {
+        //diz que o email e a senha são equivalentes ao que está na tela
+        const { email, senha } = req.body;
+
+        //vai desencriptar a senha e comparar ela com o que foi digitado
+        const hashedPassword = await bcrypt.hash(senha, 10);
+
+        try {
+            const user = await Post.create({
+                email,
+                senha: hashedPassword,
+            });
+
+            //res.status(201).json({ message: "Usuário Criado", user });
+
+            //cria os cookies!
+            const token = await jwt.sign({
+                id: user._id,
+                email: user.email,
+            }, jwtSecret);
+
+            //salva o cookie "token" equivalente ao token do usuário
+            res.cookie("token", token, { httpOnly: true });
+
+            //salva o cookie "id" equivalente ao id do usuário
+            res.cookie("userid", encodeURIComponent(user._id), { httpOnly: true });
+
+            res.redirect(`/criar/${user.id}`);
+
+            console.log("[ DBUG ] Usuário Criado: " + user);
+        } catch (error) {
+            if (error.code == 11000) {
+                res.status(409).json({ message: "Usuário já existe" });
+            }
+            res.status(500).json({ message: "Internal server error " });
+            console.log(error);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/* const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads');
     },
@@ -20,26 +170,16 @@ const storage = multer.diskStorage({
 }); //MULTER
 /* const upload = multer({ storage: storage }); */
 
-const upload = multer({ dest: 'public/uploads/'});
+const upload = multer({ dest: 'public/uploads/' });
 
 
 // FUNÇÃO PRA PEGAR O TEMPO
 // para ajudar nos logs!
 const currentDate = new Date();
 Date.prototype.timeNow = function () {
-    return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+    return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
 }; //eu queria exportar isso de outro canto, mas eu não consegui, me sinto derrotado .·°՞(¯□¯)՞°·.
 
-
-// GET
-// TESTE CROP IMAGE
-router.get('/crop', async (req, res) => {
-    try {
-        res.render('cropper');
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 router.get('/pfp/:id', async (req, res) => {
     try {
@@ -48,7 +188,7 @@ router.get('/pfp/:id', async (req, res) => {
             description: "Definir imagens de perfil e de baner"
         }
 
-        const data = await Post.findOne( { _id: req.params.id } );
+        const data = await Post.findOne({ _id: req.params.id });
 
         res.render('criarImagem', {
             locals, data
@@ -59,16 +199,16 @@ router.get('/pfp/:id', async (req, res) => {
 });
 
 router.post('/pfp/:id', upload.single('image'), async (req, res) => {
-    try{
+    try {
         const newImage = await Post.findByIdAndUpdate(req.params.id, {
             imagem: "/uploads/" + req.file.filename
         });
-        
+
         // O arquivo está em req.file
         console.log(req.file); // Exibe informações sobre o arquivo
         res.send({ filename: req.file.filename });
-        
-    } catch (error){
+
+    } catch (error) {
         console.log(error);
     };
 });
@@ -84,48 +224,50 @@ router.get('/novogrupo', async (req, res) => {
         }
 
         const data = await Post.find();
-        const dataPerfis = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
-        
+        const dataPerfis = await Post.aggregate([{ $sort: { createdAt: -1 } }]);
+
         res.render('criarG', {
             locals, data, dataPerfis
         });
-        
-    } catch (error){
+
+    } catch (error) {
         console.log(error);
     }
 });
 // POST
 // GRUPOS
- router.post('/novogrupo', async (req, res) => {
-     try {
+router.post('/novogrupo', authMiddleware, async (req, res) => {
+    try {
         const opcoesSelecionadas = req.body.selectedUsers; //array pra gravar os ids
 
         const newGrupo = new Grupo({
             nome: req.body.nomegrupo,
             membros: opcoesSelecionadas,
             descricao: req.body.descricao,
+            criador: req.cookies.userid
         });
 
         await Grupo.create(newGrupo);
 
-        res.redirect("/grupo/"+newGrupo._id);
-        
+        res.redirect("/grupo/" + newGrupo._id);
+
         console.log(`[ DBUG ] Novo grupo criado: ${req.body.nomegrupo} às ` + currentDate.timeNow());
 
-     } catch (error) {
-         console.log(error);
-     }
+    } catch (error) {
+        console.log(error);
+        res.json({ erro: error })
+    }
 });
 // GET
 // *VER* GRUPOS
-router.get('/listagrupos', async (req, res) => { 
+router.get('/listagrupos', async (req, res) => {
     try {
         const locals = {
             title: "Constelações"
         }
 
         //const data = await Grupo.find();
-        const grupos = await Grupo.aggregate([ {$sort: {createdAt: -1} } ]);
+        const grupos = await Grupo.aggregate([{ $sort: { createdAt: -1 } }]);
 
         res.render('listagrupos', {
             locals, grupos
@@ -137,7 +279,7 @@ router.get('/listagrupos', async (req, res) => {
 });
 // GET
 // *EXIBIR UM* GRUPO
-router.get('/grupo/:id', async (req, res) => {
+router.get('/grupo/:id', authMiddleware, async (req, res) => {
     try {
         const slug = req.params.id;
 
@@ -145,17 +287,28 @@ router.get('/grupo/:id', async (req, res) => {
         const data2 = Grupo.find();
         const membro = data.membros;
         const publicacoes = await Publicacao.findById({ _id: slug });
-        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1 } } ]);
-        
+        const publicacoesOrdenadas = await Publicacao.aggregate([{ $sort: { createdAt: -1 } }]);
+
+        const userid = req.cookies.userid;
+        const nameCookie = req.cookies.name;
+
+        //const membrosOrdenados = await Post.find({ userId: { $in: membro } });
+
+        /* membrosOrdenados.forEach(membros => {
+            console.log(membrosOrdenados.title);
+        }) */
+
+        //console.log(membrosOrdenados);
 
         const locals = {
             title: data.nome,
         }
-        
-        res.render('grupo',{
-            locals, data, slug, membro, data2, publicacoes, publicacoesOrdenadas
-        });
 
+        //console.log(membrosOrdenados);
+
+        res.render('grupo', {
+            locals, data, slug, membro, data2, publicacoes, publicacoesOrdenadas, userid, nameCookie
+        });
     } catch (error) {
         console.log(error);
     }
@@ -167,9 +320,10 @@ router.post('/grupo/:id', async (req, res) => {
         const assinatura = req.body.assinatura || "Anônimo";
         const novaPublicacao = new Publicacao({
             titulo: req.body.titulo,
-            assinatura: assinatura,
+            assinatura: req.cookies.name,
             texto: req.body.texto,
-            idGrupo: req.params.id
+            idGrupo: req.params.id,
+            idAutor: req.cookies.userid
         });
 
         await Publicacao.create(novaPublicacao);
@@ -194,7 +348,7 @@ router.post('/salvar-texto', async (req, res) => {
         });
 
         await Publicacao.create(novoTexto);
-        
+
         console.log('Texto salvo com sucesso!');
 
         res.redirect('/listagrupos');
@@ -215,15 +369,27 @@ router.get('/publicacao/:id', async (req, res) => {
             title: "Publicação",
             description: "Exibindo Publicação de Comunidade"
         };
-        
+
         const slug = req.params.id; // um slug é um redirecionamento de rota dinâmico, ou seja, mudaremos a rota de exibição ela dinamicamente para o perfil específico escolhido
 
+        //informações puxadas do banco de dados
         const publicacao = await Publicacao.findById({ _id: slug }); //variável que vai guardar o ID do perfil que será exibido
         const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
-        const comentariosOrdenados = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
+        const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
+
+
+
+        const dataAutor = await Post.findById({ _id: publicacao.idAutor });
+
+        console.log(dataAutor.imagem);
+
+        //cookies
+        const idCookie = req.cookies.userid;
+        const pfpCookie = req.cookies.pfp;
+        const nameCookie = req.cookies.name;
 
         res.render('publicacao', {
-            locals, publicacao, comentarios, comentariosOrdenados
+            locals, publicacao, comentarios, comentariosOrdenados, idCookie, pfpCookie, nameCookie, dataAutor
         });
 
     } catch (error) {
@@ -235,9 +401,11 @@ router.get('/publicacao/:id', async (req, res) => {
 router.post('/publicacao/:id', async (req, res) => {
     try {
         const novoComentario = new Comentario({
-            assinatura: req.body.assinatura,
+            assinatura: req.cookies.name,
             texto: req.body.texto,
-            idResposta: req.params.id
+            idResposta: req.params.id,
+            idAutor: req.cookies.userid,
+            imagem: req.cookies.pfp
         });
 
         await Comentario.create(novoComentario);
@@ -253,6 +421,11 @@ router.post('/publicacao/:id', async (req, res) => {
 
 
 
+
+
+
+
+
 // Rotas
 router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse caso estaremos "roteando" (sim, como um roteador) tudo e exportando até o script inicial app.js!
     try {
@@ -264,16 +437,19 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         let perPage = 10;
         let page = req.query.page || 1;
 
-        const data = await Post.aggregate([ {$sort: {createdAt: -1} } ])
-        .skip(perPage * page - perPage)
-        .limit(perPage)
-        .exec();
+        const data = await Post.aggregate([{ $sort: { createdAt: -1 } }])
+            .skip(perPage * page - perPage)
+            .limit(perPage)
+            .exec();
 
         const count = await Post.count();
         const nextPage = parseInt(page) + 1; // TryParse, transformando nextpage numa int
-        const hasNextPage = nextPage <= Math.ceil(count /perPage);
+        const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
-        const publicacoesOrdenadas = await Publicacao.aggregate([ {$sort: {createdAt: -1} } ]).limit(3);
+        const publicacoesOrdenadas = await Publicacao.aggregate([{ $sort: { createdAt: -1 } }]).limit(3);
+        const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]).limit(5);
+
+        const nomeCookie = req.cookies.name;
 
         res.render('index', {
             locals,
@@ -281,9 +457,10 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
             publicacoesOrdenadas,
             current: page,
             nextPage: hasNextPage ? nextPage : null,
-            currentRoute: "/"
+            currentRoute: "/",
+            nomeCookie,
+            comentariosOrdenados
         });
-
     } catch (error) {
         console.log(error);
     }
@@ -291,21 +468,32 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
     //console.log("[ INFO ] Acessou a Home " + `às ${new Date().timeNow()})`);
 });
 
+
+
+
+
+
+
 // GET
 // CRIAR PERFIL
-router.get('/criar', async (req, res) => {
+router.get('/criar/:id', async (req, res) => {
     try {
-        
         const locals = {
             title: "Criar Perfil",
             description: "Tela da criação de perfil do usuário."
         }
 
-        const data = await Post.find();
+        const slug = req.params.id;
+
+        const data = await Post.findOne({ _id: req.params.id });
+
+        const nameCookie = req.cookies.name;
+
         res.render('criarP', {
-            locals, data
+            locals, data, nameCookie
         });
-        console.log('Criando Perfil!')
+
+        console.log('[ DBUG ] Criando perfil de ' + nameCookie);
 
     } catch (error) {
         console.log(`!!! ERRO NA EXECUÇÃO DA QUERY DE PERFIL: (${error})`)
@@ -313,34 +501,25 @@ router.get('/criar', async (req, res) => {
 });
 // POST
 // PERFIL (ENVIAR AO BANCO DE DADOS)
-router.post('/criar', upload.single('image'), async (req, res) => {
+router.post('/criar/:id', upload.single('image'), async (req, res) => {
     try {
-        try {
-            const newPost = new Post({
-                title: req.body.title,
-                body: req.body.body,
-                insta: req.body.insta,
-                nascimento: req.body.nascimento,
-                sexo: req.body.sexo
-            });
+        await Post.findByIdAndUpdate(req.params.id, {
+            title: req.body.title,
+            body: req.body.body,
+            insta: req.body.insta,
+            sexo: req.body.sexo,
+            nascimento: req.body.nascimento,
+            updatedAt: Date.now()
+        });
 
-            const verificarValorExistente = await Post.findOne({ title: req.body.title });
-            if (verificarValorExistente) {
-                return res.json({ error: 'Valor já existe no banco de dados' });
-            };
-    
-            await Post.create(newPost); //isso é oq cria um novo perfil 
-            
-            const ultimoId = newPost._id;  //QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
-            res.redirect(`/interesses/${ultimoId}`);
+        //salva o cookie "name" equivalente ao email do usuário
+        res.cookie("name", req.body.title, { httpOnly: true });
 
-        } catch (error) {
-            console.log(error);
-            res.send("OCORREU UM ERRO!");
-        }
+        res.redirect(`/interesses/${req.params.id}`);
     } catch (error) {
         console.log(error);
     }
+
 });
 
 // GET
@@ -351,17 +530,24 @@ router.get("/post/:id", async (req, res) => {
 
         const data = await Post.findById({ _id: slug }); //variável que vai guardar o ID do perfil que será exibido
         const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
-        const comentarios2 = await Comentario.aggregate([ {$sort: {createdAt: -1} } ]);
+        const comentarios2 = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]);
 
         const tagsFormatadas = data.tags.join(', ') + '.'; //formata o array dos interesses pra eles não aparecem bagunçados no perfil
+
+        const idCookie = req.cookies.userid;
+        const pfpCookie = req.cookies.pfp;
+        const nameCookie = req.cookies.name;
+        const tokenCookie = req.cookies.token;
+
+        console.log(idCookie)
 
         const locals = {
             title: data.title,
             description: "Perfil",
-            currentRoute: `/post/${slug}` //n entendi pra que serve, não me pergunte ¯\_(ツ)_/¯
+            currentRoute: `/post/${slug}`, //n entendi pra que serve, não me pergunte ¯\_(ツ)_/¯
         }
 
-        res.render('post', { locals, data, comentarios, slug, comentarios2, tagsFormatadas });
+        res.render('post', { locals, data, comentarios, slug, comentarios2, tagsFormatadas, idCookie, nameCookie, pfpCookie, tokenCookie });
     }
     catch (error) {
         console.log(error);
@@ -374,32 +560,22 @@ router.post('/post/:id', async (req, res) => {
         const assinatura = req.body.assinatura || "Anônimo"; //essa variável vai substituir o vazio por "Anônimo", já que o moongose decidiu ignorar o default value!
 
         const novoComentario = new Comentario({
-            assinatura: assinatura,
+            assinatura: req.cookies.name,
             texto: req.body.texto,
-            idResposta: req.params.id
+            idResposta: req.params.id,
+            imagem: req.cookies.pfp
         });
 
         await Comentario.create(novoComentario);
-        
+
         res.redirect(`/post/${req.params.id}`);
-        
+
         console.log(`[ DBUG ] Comentário postado no perfil de ID: ${req.params.id} às ` + currentDate.timeNow());
 
     } catch (error) {
         console.log(error);
     }
 })
-// POST
-// Curtir perfil
-router.post('/curtir/:id', async (req, res) => {
-    try {
-        await Post.findByIdAndUpdate(req.params.id, { $inc: { curtidas: 1 } }); //atualiza o perfil no banco de dados, incrementando 1 ao número de curtidas
-
-        res.redirect('back'); //retorna para a página do perfil
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 // GET
 // interesses - escolher interesses
@@ -409,11 +585,11 @@ router.get('/interesses/:id', async (req, res) => {
             title: "Interesses",
             description: "Adicionar Tags de Interesse",
         };
-        
-        const data = await Post.findOne( { _id: req.params.id } );
+
+        const data = await Post.findOne({ _id: req.params.id });
 
         res.render('interesses', {
-            locals, 
+            locals,
             data
         });
     }
@@ -427,14 +603,14 @@ router.post('/interesses/:id', async (req, res) => {
     try {
         //req.body.languages = req.body.languages.map(item => (Array.isArray(item) && item[1]) || null);
         //console.log(req.body.languages);
-        
+
         await Post.findByIdAndUpdate(req.params.id, {
             tags: req.body.interesses
         });
 
         const lastId = req.params.id;  //OUTRO SLUG - QUANDO PRECISAR LEVAR DIRETO AO NOVO PERFIL, NOSSA EU FUI MUITO BRABÍSSIMO AQUI
         res.redirect(`/pfp/${lastId}`);
-        
+
         console.log(`[ INFO ] Interesses atualizados para o usuário ${lastId} às ` + currentDate.timeNow());
     } catch (error) {
         console.log(error)
@@ -444,18 +620,18 @@ router.post('/interesses/:id', async (req, res) => {
 // GET 
 // CONSTELAÇÃO - juntar os interesses dos usuários
 router.get('/verify/:id', async (req, res) => {
-    try{
+    try {
         let slug = req.params.id; //vai pegar o ID do perfil (na página de exibição de perfil)
         const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
 
-        const data2 = await Post.aggregate([ {$sort: {createdAt: -1} } ]);
+        const data2 = await Post.aggregate([{ $sort: { createdAt: -1 } }]);
         //console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
 
 
         function temCincoIguais(array1, array2) {
             // Interseção dos dois arrays: encontra os elementos comuns
             const intersecao = lodash.intersection(array1, array2);
-          
+
             // Verifica se a interseção tem pelo menos 5 elementos
             return intersecao.length >= 5;
         };
@@ -467,7 +643,7 @@ router.get('/verify/:id', async (req, res) => {
 
             const resultados = temCincoIguais(data.tags, perfil.tags);
 
-            if (resultados === true && perfil.tags !== undefined && perfil.tags !== null){
+            if (resultados === true && perfil.tags !== undefined && perfil.tags !== null) {
                 perfisVerificados.push(perfil._id);
             };
         });
@@ -479,7 +655,7 @@ router.get('/verify/:id', async (req, res) => {
             description: "Perfil",
             currentRoute: `/post/${slug}`
         }
-        
+
         res.render('constelacao', {
             locals,
             data,
@@ -507,13 +683,13 @@ router.post("/search", async (req, res) => {
 
         const data = await Post.find({
             $or: [
-                { title: { $regex: new RegExp(searchNoSpecialChar, "i") }},
-                { body: { $regex: new RegExp(searchNoSpecialChar, "i") }}
+                { title: { $regex: new RegExp(searchNoSpecialChar, "i") } },
+                { body: { $regex: new RegExp(searchNoSpecialChar, "i") } }
             ]
 
         });
 
-        res.render("search", { 
+        res.render("search", {
             data,
             locals
         });
@@ -542,6 +718,11 @@ inserirInfoPost(); */
 router.get("/about", async (req, res) => {
     res.render('about');
     console.log(`[ INFO ] acessou about às ` + currentDate.timeNow());
+});
+
+router.get("/contact", async (req, res) => {
+    res.render('contato');
+    console.log('[ INFO ] acessou contato às ' + currentDate.timeNow());
 });
 
 module.exports = router;

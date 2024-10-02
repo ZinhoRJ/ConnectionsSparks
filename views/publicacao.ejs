@@ -7,41 +7,59 @@
         <%= publicacao.texto %>
     </p> <br>
 
-    <p style="font-size:medium">
-        <i>
-            <b>Publicado por: </b> <%= publicacao.assinatura %></i>
-        </i>
-    </p>
+    <b> <i>Publicado por:</i> </b> <br>
+    <div style="display: flex;">
+        
+        <div style="font-size:medium;">
+            <i>
+                <img src="<%= dataAutor.imagem %>" class="foto-perfil" style="width: 15%; height: 80%; padding: 1%;">
+                <a href="/post/<%= publicacao.idAutor %>"> <%= publicacao.assinatura %> </a></i>
+            </i>
+        </div>
+    </div>
 </div>
 
 
 
-<form id="form" action="/publicacao/<%= publicacao.id %>" method="POST">
-    <div id="postarComentario" style="display: none">
-    <h3>RESPONDER:</h3>
 
-    <label for="assinatura" maxlenght=""><b>Assinatura:</b></label> <font color="grey"><i>(Opcional)</i></font>
-    <input type="text" id="assinatura" name="assinatura" maxlength="50">
-    
-    <label for="texto"><b>Texto:</b></label> <div id="contador"></div> 
-    <textarea name="texto" id="texto" coLs="50" rows="6" maxlength="600" oninput="atualizarContador()" style="resize:none;"></textarea>
-    
-    <input type="submit" value="Adicionar" class="btn">   
-    </div>
-</form>
+<% if (idCookie) { %>
+    <form action="/publicacao/<%= publicacao.id %>" method="POST">
+        <h3 style="padding-top: 3%;">COMENTAR:</h3>
+
+        <div id="postarComentario" style="display: flex;">
+            <img src="<%= pfpCookie %>" class="foto-perfil"> 
+            <div style="flex: 1; padding-left: 20px;">
+                
+                <b><%= nameCookie %></b> - <font color="grey"><i>(Por favor, mantenha o respeito.)</i></font>
+
+                <textarea name="texto" id="texto" coLs="50" rows="6" maxlength="600" oninput="atualizarContador()" style="resize:none; width: 100%; height: 65%;"></textarea>
+
+                <div style="display: flex; align-items: center;">
+                    <input type="submit" value="Adicionar" class="btn">
+                    <div id="contador" style="padding-left: 2%;"></div> 
+                </div>
+                
+            </div>
+        </div>
+    </form>
+<% } %>
 
 
-<h3>RESPOSTAS:</h3>
-
-<button class="btn" onclick="mostrar()" id="botaoMostrar">Escrever Comentário</button>
+<h3>COMENTÁRIOS:</h3>
 
 <ul class="publicação-ul">
     <% comentariosOrdenados.forEach(comentario => { %>
         <% if (comentario.idResposta === publicacao.id) { %>
             <div>
-
+                <span>
+                    <img src="<%= comentario.imagem %>" class="foto-perfil" style="width: 70px; height: 70px;">
+                </span>
                 
-                <span> &starf; <b><%= comentario.assinatura %></b> <br>
+                <span> 
+                    &starf; 
+                    <b>
+                        <a href="/post/<%= comentario.idAutor %>"> <%= comentario.assinatura %> </a>
+                    </b> <br>
                 </span> 
 
                 <span>

@@ -10,6 +10,9 @@ const Comentario = new Schema({
         type: String,
         required: true,
     },
+    likes: {
+        type: Array
+    },
     imagem: {
         type: String,
         required: true,
@@ -18,6 +21,9 @@ const Comentario = new Schema({
     idResposta: {
         type: String
         
+    },
+    idAutor: {
+        type: String
     }
 });
 

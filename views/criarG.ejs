@@ -9,18 +9,19 @@
     <label for="descricao"><b>Descrição do grupo:</b></label>
     <input type="text" id="descricao" name="descricao" required>
 
-    <h2>SELECIONE AS ESTRELAS:</h2>
-    <fieldset> <legend>Convide os usuários para este grupo:</legend>
+    <h2>SELECIONE OS MEMBROS DO GRUPO:</h2>
+    <h4>*Apenas eles poderão interagir com o grupo.</h4>
+    <fieldset> <legend>Convide os usuários:</legend>
         
         <% data.forEach (post => { %>
             <label>
-                <img src="/img/user.png" class="foto-perfil" style="max-width: 6%;">
+                <img src="/img/user.png" class="foto-perfil" style="max-width: 11%;">
                 <input type="checkbox" name="selectedUsers" value="<%= post.id %>">
                 <%= post.title %>
             </label> <br>
         <% }) %>
-        <br>
-        <input type="submit" value="Criar Grupo" class="btn">            
+        
+        <input type="submit" value="Criar Grupo" class="btn" style="margin-top: 2%; padding: 3%;">            
     </fieldset>
 </form>
 </body>

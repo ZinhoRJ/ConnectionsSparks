@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const PerfilSchema = new Schema({
-    nome: {
+const PostSchema = new Schema({
+    title: {
         type: String,
-        required: true
+        required: false
     },
     insta: {
         type: String,
@@ -12,23 +12,43 @@ const PerfilSchema = new Schema({
     },
     sexo: {
         type: String,
-        required: true
+        required: false
     },
     nascimento: {
         type: Date,
-        required: true
+        required: false
     },
-    bio: {
+    body: {
         type: String,
-        required: true
+        required: false
     },
     createdAt: {
         type: Date,
         default: Date.now
     },
     tags: {
-        type: String
+        type: Array,
+        default: ""
+    },
+    curtidas: {
+        type: Array
+    },
+    verificado: {
+        type: Boolean,
+        default: false
+    },
+    imagem: {
+        type: String,
+        default: "/uploads/user.png"
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    senha: {
+        type: String,
+        required: true,
     }
 });
-
-module.exports = mongoose.model("Perfil", PerfilSchema);
+module.exports = mongoose.model("Post", PostSchema);

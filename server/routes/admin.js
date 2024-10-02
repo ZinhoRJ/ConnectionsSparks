@@ -1,13 +1,12 @@
 const express = require("express");
-const router = express.Router(); //biblioteca que ajuda a organizar arrays
-const Post = require("../models/post");
+const router = express.Router();
+const Post = require("../models/perfil");
 const User = require("../models/user");
 const Comentario = require("../models/comentarios");
 const Grupo = require("../models/grupos");
 const Publicacao = require("../models/publicacao");
 const bcrypt = require("bcrypt"); // encriptador de senhas
 const jwt = require("jsonwebtoken"); // token para o usuário logado, ficará salvo nos cookies
-
 
 const adminLayout = "../views/layouts/admin"; //define o layout das páginas como o de admin, pra ficar diferente do layout de usuário comum
 const jwtSecret = process.env.JWT_SECRET; //senha para transações de cookies, sem ela, todas as senhas ficam vulneráveis

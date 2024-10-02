@@ -1,13 +1,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<h2>Definir Foto de Perfil e Banner:</h2>
+<h2>Definir Foto de Perfil:</h2>
+<h4>
+    <ol>
+        <li>
+            Clique em procurar;
+        </li>
+        <li>
+            Após selecionar sua imagem, clique em Enviar;
+        </li>
+        <li>
+            Caso tudo esteja correto, clique em "Terminar" para ver seu perfil.
+        </li>
+    </ol>
+</h4> <br>
 
 <form id="uploadForm" enctype="multipart/form-data">
     <input type="file" name="image">
     <button type="submit">Enviar</button>
-</form>
+</form> <br>
 
-<img id="previewImage" class="foto-perfil" src="<%= data.imagem %>" alt="Imagem">
+<img id="previewImage" class="foto-perfil" src="<%= data.imagem %>" alt="Imagem"> 
+
+
+<p>Sua foto será mostrada para todos os usuários do site.</p>
+
+<a href="/post/<%= data._id %>">
+    <button class="btn">Terminar</button>
+</a>
 
 <script>
     $(document).ready(function() {

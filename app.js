@@ -11,10 +11,11 @@ const http = require('http');
 const server = http.createServer(express);
 const io = require('socket.io')(server); // TESTE
 const path = require("path"); //depedência de algo, mas eu não sei oq é
+const bodyParser = require('body-parser');
+
 
 const connectDB = require("./server/db");
 const { isActiveRoute } = require("./server/helpers/routeHelpers");
-
 
 const app = express(); //toda vez que usarmos "app.algumacoisa" significa que estamos chamando o express
 const PORT = 8081 || process.env.PORT; // define a porta de conexão como local (8081) ou qualquer que seja a do host (process.env)
@@ -28,6 +29,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(methodOverride('_method'));
+
+// dependências do body parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configurar cookies
 app.use(session({
@@ -53,8 +58,9 @@ app.set("view engine", "ejs"); //define a EJS como engine de visualização padr
 
 app.locals.isActiveRoute = isActiveRoute;
 
-app.use("/", require("./server/routes/main")); //dizemos que vamos usar as rotas presentes no arquivo main.js, isso evitar ter que definir todas as rotas aqui
+app.use("/", require("./server/routes/main"));  //dizemos que vamos usar as rotas presentes no arquivo main.js, isso evitar ter que definir todas as rotas aqui
 app.use("/", require("./server/routes/admin")); //a mesma coisa, mas com as rotas separadas para o administrador
+app.use("/", require("./server/routes/user"));  //rotas exclusivas do usuário, como editar perfil, etc
 
 const currentDate = new Date();
 Date.prototype.timeNow = function () {

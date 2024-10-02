@@ -13,6 +13,10 @@ const GrupoSchema = new Schema({
     membros: {
         type: Array,
     },
+    criador: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
