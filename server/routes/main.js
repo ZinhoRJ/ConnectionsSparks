@@ -2,12 +2,24 @@
 const express = require("express");
 const lodash = require("lodash");
 const router = express.Router();
-const Post = require("../models/perfil");
+const Perfil = require("../models/perfil");
+const Posts = require("../models/posts");
 const Comentario = require("../models/comentarios");
 const Grupo = require('../models/grupos');
 const Publicacao = require('../models/publicacao')
 const timeFunction = require('../dateFunc');
 const multer = require("multer");
+
+
+// MUITO IMPORTANTE
+// CASO PRECISE MUDAR O NOME DE UMA COLEÇÃO
+/* Nome_Da_Coleção.collection.rename("novo_nome", { dropTarget: true }, (err) => {
+    if (err) {
+        console.error("Error renaming collection:", err);
+    } else {
+        console.log("Collection renamed successfully!");
+    }
+}); */
 
 
 // BIBLIOTECAS DE COOKIES E AFINS:
@@ -51,7 +63,7 @@ router.post('/login', async (req, res) => {
         const { email, senha } = req.body;
 
         //procura o perfil no banco de dados referente ao email digitado na variável user
-        const user = await Post.findOne({ email });
+        const user = await Perfil.findOne({ email });
 
         //verifica se o perfil existe de fato
         if (!user) {
@@ -125,7 +137,7 @@ router.post('/registro', async (req, res) => {
         const hashedPassword = await bcrypt.hash(senha, 10);
 
         try {
-            const user = await Post.create({
+            const user = await Perfil.create({
                 email,
                 senha: hashedPassword,
             });
@@ -181,39 +193,6 @@ Date.prototype.timeNow = function () {
 }; //eu queria exportar isso de outro canto, mas eu não consegui, me sinto derrotado .·°՞(¯□¯)՞°·.
 
 
-router.get('/pfp/:id', async (req, res) => {
-    try {
-        const locals = {
-            title: "PFP & Banner",
-            description: "Definir imagens de perfil e de baner"
-        }
-
-        const data = await Post.findOne({ _id: req.params.id });
-
-        res.render('criarImagem', {
-            locals, data
-        });
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-router.post('/pfp/:id', upload.single('image'), async (req, res) => {
-    try {
-        const newImage = await Post.findByIdAndUpdate(req.params.id, {
-            imagem: "/uploads/" + req.file.filename
-        });
-
-        // O arquivo está em req.file
-        console.log(req.file); // Exibe informações sobre o arquivo
-        res.send({ filename: req.file.filename });
-
-    } catch (error) {
-        console.log(error);
-    };
-});
-
-
 // GET
 // GRUPOS
 router.get('/novogrupo', async (req, res) => {
@@ -223,8 +202,8 @@ router.get('/novogrupo', async (req, res) => {
             decription: "Tela de criação de Grupos"
         }
 
-        const data = await Post.find();
-        const dataPerfis = await Post.aggregate([{ $sort: { createdAt: -1 } }]);
+        const data = await Perfil.find();
+        const dataPerfis = await Perfil.aggregate([{ $sort: { createdAt: -1 } }]);
 
         res.render('criarG', {
             locals, data, dataPerfis
@@ -292,7 +271,7 @@ router.get('/grupo/:id', authMiddleware, async (req, res) => {
         const userid = req.cookies.userid;
         const nameCookie = req.cookies.name;
 
-        //const membrosOrdenados = await Post.find({ userId: { $in: membro } });
+        //const membrosOrdenados = await Perfil.find({ userId: { $in: membro } });
 
         /* membrosOrdenados.forEach(membros => {
             console.log(membrosOrdenados.title);
@@ -379,9 +358,7 @@ router.get('/publicacao/:id', async (req, res) => {
 
 
 
-        const dataAutor = await Post.findById({ _id: publicacao.idAutor });
-
-        console.log(dataAutor.imagem);
+        const dataAutor = await Perfil.findById({ _id: publicacao.idAutor });
 
         //cookies
         const idCookie = req.cookies.userid;
@@ -421,6 +398,61 @@ router.post('/publicacao/:id', async (req, res) => {
 
 
 
+// GET
+// Ver um Perfil e seus comentários
+router.get('/ver-post/:id', async (req, res) => {
+    try {
+        const post = await Posts.findById({ _id: req.params.id }); //variável que vai guardar o ID do post que será exibido
+        const dataAutor = await Perfil.findById({ _id: post.idResposta });
+
+        const locals = {
+            title: "Perfil de " + dataAutor.title,
+            description: "Exibindo Perfil de usuário."
+        };
+
+        //informações puxadas do banco de dados
+        
+        //const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
+        const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
+
+        //cookies
+        const idCookie = req.cookies.userid;
+        const pfpCookie = req.cookies.pfp;
+        const nameCookie = req.cookies.name;
+
+        res.render('verPost', {
+            locals, post, dataAutor, comentariosOrdenados, idCookie, pfpCookie, nameCookie
+        });
+
+    } catch (error) {
+        console.log(error);
+    };
+});
+// POST
+// Esse post só existe para criar os novos comentários dentro de um post (do usuário)
+router.post('/comentar-post/:id', async (req, res) => {
+    try {
+        const novoComentario = new Comentario({
+            assinatura: req.cookies.name,
+            texto: req.body.texto,
+            idResposta: req.params.id,
+            idAutor: req.cookies.userid,
+            imagem: req.cookies.pfp
+        });
+
+        await Comentario.create(novoComentario);
+
+        res.redirect(`back`);
+
+        console.log(`[ DBUG ] Comentário postado na publicação de ID: ${req.params.id} às ` + currentDate.timeNow());
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+
 
 
 
@@ -437,19 +469,25 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
         let perPage = 10;
         let page = req.query.page || 1;
 
-        const data = await Post.aggregate([{ $sort: { createdAt: -1 } }])
+        const data = await Perfil.aggregate([{ $sort: { createdAt: -1 } }])
             .skip(perPage * page - perPage)
             .limit(perPage)
             .exec();
 
-        const count = await Post.count();
+        const count = await Perfil.count();
         const nextPage = parseInt(page) + 1; // TryParse, transformando nextpage numa int
         const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
         const publicacoesOrdenadas = await Publicacao.aggregate([{ $sort: { createdAt: -1 } }]).limit(3);
         const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]).limit(5);
+        
+        const grupos = await Grupo.aggregate([{ $sort: { createdAt: -1 } }]);
+        
+        const postsOrdenados = await Posts.aggregate([{ $sort: { createdAt: -1 } }]).limit(7);
 
         const nomeCookie = req.cookies.name;
+
+        const idCookie = req.cookies.userid;
 
         res.render('index', {
             locals,
@@ -459,7 +497,10 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
             nextPage: hasNextPage ? nextPage : null,
             currentRoute: "/",
             nomeCookie,
-            comentariosOrdenados
+            comentariosOrdenados,
+            grupos,
+            postsOrdenados,
+            idCookie
         });
     } catch (error) {
         console.log(error);
@@ -485,7 +526,7 @@ router.get('/criar/:id', async (req, res) => {
 
         const slug = req.params.id;
 
-        const data = await Post.findOne({ _id: req.params.id });
+        const data = await Perfil.findOne({ _id: req.params.id });
 
         const nameCookie = req.cookies.name;
 
@@ -503,7 +544,7 @@ router.get('/criar/:id', async (req, res) => {
 // PERFIL (ENVIAR AO BANCO DE DADOS)
 router.post('/criar/:id', upload.single('image'), async (req, res) => {
     try {
-        await Post.findByIdAndUpdate(req.params.id, {
+        await Perfil.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
             body: req.body.body,
             insta: req.body.insta,
@@ -528,9 +569,9 @@ router.get("/post/:id", async (req, res) => {
     try {
         const slug = req.params.id; // um slug é um redirecionamento de rota dinâmico, ou seja, mudaremos a rota de exibição ela dinamicamente para o perfil específico escolhido
 
-        const data = await Post.findById({ _id: slug }); //variável que vai guardar o ID do perfil que será exibido
-        const comentarios = await Comentario.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
-        const comentarios2 = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]);
+        const data = await Perfil.findById({ _id: slug }); //variável que vai guardar o ID do perfil que será exibido
+        const posts = await Posts.findById({ _id: slug }); //variável que vai procurar os comentários no banco de dados
+        const postsOrdenados = await Posts.aggregate([{ $sort: { createdAt: -1 } }]);
 
         const tagsFormatadas = data.tags.join(', ') + '.'; //formata o array dos interesses pra eles não aparecem bagunçados no perfil
 
@@ -547,26 +588,27 @@ router.get("/post/:id", async (req, res) => {
             currentRoute: `/post/${slug}`, //n entendi pra que serve, não me pergunte ¯\_(ツ)_/¯
         }
 
-        res.render('post', { locals, data, comentarios, slug, comentarios2, tagsFormatadas, idCookie, nameCookie, pfpCookie, tokenCookie });
+        res.render('perfil', { locals, data, posts, slug, postsOrdenados, tagsFormatadas, idCookie, nameCookie, pfpCookie, tokenCookie });
     }
     catch (error) {
         console.log(error);
     }
 })
 // POST
-// Perfis - ESSE POST SÓ EXISTE POR CAUSA DOS COMENTÁRIOS, A EXIBIÇÃO DO PERFIL SÓ DEPENDE DE GET
-router.post('/post/:id', async (req, res) => {
+// PUBLICAR POST
+router.post('/public-post/:id', async (req, res) => {
     try {
         const assinatura = req.body.assinatura || "Anônimo"; //essa variável vai substituir o vazio por "Anônimo", já que o moongose decidiu ignorar o default value!
 
-        const novoComentario = new Comentario({
+        const novoPost = new Comentario({
             assinatura: req.cookies.name,
             texto: req.body.texto,
             idResposta: req.params.id,
-            imagem: req.cookies.pfp
+            imagem: req.cookies.pfp,
+            idAutor: req.cookies.userid
         });
 
-        await Comentario.create(novoComentario);
+        await Posts.create(novoPost);
 
         res.redirect(`/post/${req.params.id}`);
 
@@ -586,7 +628,7 @@ router.get('/interesses/:id', async (req, res) => {
             description: "Adicionar Tags de Interesse",
         };
 
-        const data = await Post.findOne({ _id: req.params.id });
+        const data = await Perfil.findOne({ _id: req.params.id });
 
         res.render('interesses', {
             locals,
@@ -604,7 +646,7 @@ router.post('/interesses/:id', async (req, res) => {
         //req.body.languages = req.body.languages.map(item => (Array.isArray(item) && item[1]) || null);
         //console.log(req.body.languages);
 
-        await Post.findByIdAndUpdate(req.params.id, {
+        await Perfil.findByIdAndUpdate(req.params.id, {
             tags: req.body.interesses
         });
 
@@ -622,9 +664,9 @@ router.post('/interesses/:id', async (req, res) => {
 router.get('/verify/:id', async (req, res) => {
     try {
         let slug = req.params.id; //vai pegar o ID do perfil (na página de exibição de perfil)
-        const data = await Post.findById({ _id: slug }); //vai achar as informações no banco de daods
+        const data = await Perfil.findById({ _id: slug }); //vai achar as informações no banco de daods
 
-        const data2 = await Post.aggregate([{ $sort: { createdAt: -1 } }]);
+        const data2 = await Perfil.aggregate([{ $sort: { createdAt: -1 } }]);
         //console.log(data2); //vai mostrar quais tags foram adicionadas ao perfil, isso vai ajudar a entender oq tá acontecendo na api
 
 
@@ -681,7 +723,7 @@ router.post("/search", async (req, res) => {
         let searchTerm = req.body.searchTerm;
         const searchNoSpecialChar = searchTerm.replace(verificarTermosPesquisa, "");
 
-        const data = await Post.find({
+        const data = await Perfil.find({
             $or: [
                 { title: { $regex: new RegExp(searchNoSpecialChar, "i") } },
                 { body: { $regex: new RegExp(searchNoSpecialChar, "i") } }
@@ -703,15 +745,15 @@ router.post("/search", async (req, res) => {
 
 
 /*DUMMY
-function inserirInfoPost () {
-    Post.insertMany([
+function inserirInfoPerfil () {
+    Perfil.insertMany([
         {
             title: "Artigo de Teste 2",
             body: "Este é um teste."
         },
     ])
 }
-inserirInfoPost(); */
+inserirInfoPerfil(); */
 
 // GET
 // Sobre Nós

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const PostSchema = new Schema({
+const PerfilSchema = new Schema({
     title: {
         type: String,
         required: false
@@ -51,4 +51,5 @@ const PostSchema = new Schema({
         required: true,
     }
 });
-module.exports = mongoose.model("Post", PostSchema);
+
+module.exports = mongoose.model("Perfil", PerfilSchema);

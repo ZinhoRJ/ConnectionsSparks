@@ -6,31 +6,23 @@
 </style>
 
 <div>
-    <h2>
-        <%= publicacao.titulo %>
-    </h2>
-    
-    <p style="font-size:larger;">
-        <%= publicacao.texto %>
-    </p> <br>
-
-    <b> <i>Publicado por:</i> </b> <br>
-    <div style="display: flex;">
-        
-        <div style="font-size:medium;">
-            <i>
-                <img src="<%= dataAutor.imagem %>" class="foto-perfil" style="width: 15%; height: 80%; padding: 1%;">
-                <a href="/post/<%= publicacao.idAutor %>"> <%= publicacao.assinatura %> </a></i>
-            </i>
-        </div>
+    <div>
+        <h2 style="display: flex; align-items: center;">
+            <img src="<%= dataAutor.imagem %>" class="foto-perfil" style="width: 15%; height: 80%; padding: 1%;">
+            <a href="/post/<%= post.idAutor %>" style="margin-left: 1.5%;"> <%= dataAutor.title %> </a></i>
+        </h2>
     </div>
+    
+    <p style="font-size:x-large;">
+        <%= post.texto %>
+    </p> <br>
 </div>
 
 
 
 
 <% if (idCookie && pfpCookie) { %>
-    <form action="/publicacao/<%= publicacao.id %>" method="POST">
+    <form action="/comentar-post/<%= post.id %>" method="POST">
         <h3 style="padding-top: 3%;">COMENTAR:</h3>
 
         <div id="postarComentario" style="display: flex;">
@@ -56,7 +48,7 @@
 
 <ul class="publicação-ul">
     <% comentariosOrdenados.forEach(comentario => { %>
-        <% if (comentario.idResposta === publicacao.id) { %>
+        <% if (comentario.idResposta === post.id) { %>
             <div>
                 <span>
                     <img src="<%= comentario.imagem %>" class="foto-perfil" style="width: 70px; height: 70px;">

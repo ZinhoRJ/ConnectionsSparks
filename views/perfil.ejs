@@ -1,0 +1,348 @@
+<style>
+    body {
+        background-color: rgb(13, 2, 38);
+        background-image: none;
+    }
+</style>
+
+<div>
+    <img src="" class="banner-perfil">
+    <img src="<%= data.imagem %>" class="foto-perfil">
+    <div class="nome-perfil" id="nome"><b>
+            <%= data.title %>
+        </b></div>
+    Curtidas: <label type="number" id="numeroCurtidas">
+        <%= data.curtidas.length %>
+    </label>
+
+</div> <br>
+
+<div style="margin-top: 1%; margin-bottom: 1%;">
+    <% if (data._id==idCookie) { %>
+        <a href="/editar-perfil/<%= data._id %>" class="btn"> Editar Perfil </a>
+        <% } %>
+
+            <% if (!data.curtidas.includes(idCookie)) { %>
+                <form action="/curtir/<%= data.id %>" method="POST">
+                    <input type="submit" value="Curtir Perfil" class="btn">
+                </form>
+                <% } %>
+</div>
+
+
+<div style="margin-top: -20%; margin-left: 43%;">
+    <p> <b>Instagram: </b> <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank"
+            rel="noopener noreferrer">@abc</a> </p>
+
+    <p>
+        <b>Sexo:</b>
+        <%= data.sexo %>
+    </p>
+
+    <p> <b> Interesses: </b>
+        <%= tagsFormatadas %>
+    </p>
+
+    <p> <b> Nascimento: </b>
+        <%= data.nascimento.toDateString() %>
+    </p>
+
+    <b>Biografia: </b>
+    <%= data.body %>
+        <div class="biografia-box">
+            <article class="article">
+                Informações:
+            </article>
+        </div>
+</div>
+
+
+<!-- <div style="margin-top: 5%;"> 
+    <p> <b>Instagram: </b> <a href="https://www.instagram.com/<%= data.insta %>/" target="_blank" rel="noopener noreferrer">@<%= data.insta %></a> </p>
+
+    <p>
+        <b>Sexo:</b>
+        <%= data.sexo %>
+    </p>
+        
+    <p> <b> Interesses: </b> <%= tagsFormatadas %></p>
+        
+    <p> <b> Nascimento: </b> <%= data.nascimento.toDateString() %> </p>
+
+    <b>Biografia:</b>
+    <article class="article">
+        <%= data.body %>
+    </article>    
+</div> -->
+
+
+
+
+<h1></h1>
+<div>
+    INFORMAÇÕES DE DIAGNÓSTICO:<br>
+    <b> ID: </b>
+    <%= data._id %> <br>
+        <b> Criado em: </b>
+        <%= data.createdAt.toDateString() %>
+
+            <br>
+            <a href="/interesses/<%= data.id %>">[!] EDITAR TAGS [!]</a>
+            <br>
+            <a href="/verify/<%= data.id %>">[@] VER CONSTELAÇÃO [@]</a>
+</div>
+
+
+
+
+<% if (idCookie==data._id) { %>
+    <form action="/public-post/<%= data.id %>" method="POST">
+        <h3>CRIAR POST:</h3>
+
+        <div style="display: flex;">
+            <img src="<%= pfpCookie %>" class="foto-perfil">
+            <div style="flex: 1; padding-left: 20px;">
+
+                <b>
+                    <%= nameCookie %>
+                </b> - <font color="grey"><i>(Por favor, mantenha o respeito.)</i></font>
+
+                <textarea name="texto" id="texto" coLs="50" rows="4" maxlength="200" oninput="atualizarContador()"
+                    style="resize:none; width: 100%; height: 38%;"></textarea>
+
+                <div style="display: flex; align-items: center;">
+                    <input type="submit" value="Adicionar" class="btn">
+                    <div id="contador" style="padding-left: 2%;"></div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <% } %>
+
+        <h3>POSTS:</h3>
+
+        <style>
+            .container-posts {
+                display: flex;
+                flex-direction: column;
+                /*align-items: center;*/
+                list-style-type: none;
+                width: 100%;
+                max-width: -webkit-fill-available;
+                margin: 0 auto;
+                border: 1px solid #ccc;
+                background-color: #2c2a2a;
+                border-radius: 10px;
+                border: 1.9px solid;
+                border-color: #b100f7;
+                margin-bottom: 1rem;
+                padding: 0.5em;
+                padding: web-kit;
+                height: 200x;
+            }
+
+            .top-section {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .top-section img {
+                margin-right: 20px;
+            }
+
+            .buttons {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .buttons button {
+                flex: 1;
+                margin: 0 10px;
+            }
+        </style>
+
+        <% postsOrdenados.forEach(posts=> { %>
+            <% if (posts.idResposta===data.id) { %>
+                <ul class="container-posts">
+
+                    <div style="display: flex;">
+                        <img src="<%= posts.imagem %>" class="foto-perfil">
+                        <div style="flex: 1; padding-left: 20px;" class="container-text">
+
+                            
+                            <b>
+                                <%= posts.assinatura %>
+                            </b>
+
+                            <div style="resize:none; padding-bottom: 10%; position: relative;">
+                                <%= posts.texto %>
+                            </div>
+
+                            <div style="display: flex; z-index: -1;">
+                                <a href="/ver-post/<%= posts._id %>">
+                                    <button class="btn-comentar">COMENTAR / VER COMENTÁRIOS</button>
+                                </a>
+                                
+
+                                <% if (!posts.likes.includes(idCookie)) { %>
+                                        <form action="/curtir-post/<%= posts._id %>?_method=POST" method="POST" style="margin-left: 1%; margin-right: 6ch;">
+                                            <button class="btn-comentar" style="margin-left: 60%;">CURTIR</button>
+                                            
+                                        </form>
+                                        <font color="yellow"> &starf; </font> Curtidas: <%= posts.likes.length %>
+                                <% } %>
+                                <!-- <button class="btn-comentar" style="margin: auto;">Curtir</button> -->
+                                
+                                <% if (idCookie==data._id) { %>
+                                    <div>
+                                        <form
+                                            action="/delete-post-user/<%= posts._id %>?_method=DELETE"
+                                            method="POST">
+                                            <button class="btn-comentar" style="background-image: linear-gradient(#f80000, #942307); margin-left: 280px;">Apagar</button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            
+                        </div>
+
+                        <!-- <div class="buttons">
+                            <div style="display: flex;">
+                                CURTIDAS: <%= posts.likes.length %>
+                                <% if (!posts.likes.includes(idCookie)) { %>
+                                    <div>
+                                        <form action="/curtir-post/<%= posts._id %>?_method=POST" method="POST">
+                                            <button>CURTIR</button>
+                                        </form>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            
+
+                                    <a href="/ver-post/<%= posts._id %>">
+                                        <button>
+                                            VER RESPOSTAS / RESPONDER
+                                        </button>
+                                    </a>
+
+                                        <% if (idCookie==data._id) { %>
+                                            <div>
+                                                <form action="/delete-post-user/<%= posts._id %>?_method=DELETE"
+                                                    method="POST">
+                                                    <button style="background-color: rgb(214, 0, 0);">Apagar</button>
+                                                </form>
+                                            </div>
+                                            <% } %>
+
+                                                
+                        </div> -->
+
+                    </div>
+                </ul>
+                <% } %>
+                    <% }) %>
+
+                        <h3>POSTS:</h3>
+                        <% postsOrdenados.forEach(posts=> { %>
+                            <% if (posts.idResposta===data.id) { %>
+                                <ul class="publicação-ul">
+                                    <div style="display: flex;">
+                                        <img src="<%= posts.imagem %>" class="foto-perfil">
+                                        <div style="flex: 1; padding-left: 20px;" class="container-text">
+
+                                            <font color="yellow"> &starf; </font>
+                                            <b>
+                                                <%= posts.assinatura %>
+                                            </b>
+
+                                            <div style="resize:none; padding-bottom: 10%; position: relative;">
+                                                <%= posts.texto %>
+                                            </div>
+                                            <button class="btn-comentar"
+                                                onclick="toggleCommentBox('<%= posts._id %>')">COMENTAR</button>
+                                        </div>
+
+                                        CURTIDAS: <%= posts.likes.length %>
+                                            <% if (!posts.likes.includes(idCookie)) { %>
+                                                <div>
+                                                    <form action="/curtir-comentario/<%= posts._id %>?_method=POST"
+                                                        method="POST"></form>
+                                                    <button class="btn-curtir">CURTIR</button>
+                                                    </form>
+                                                </div>
+
+                                                <% } %>
+
+
+                                                    <% if (idCookie==data._id) { %>
+                                                        <div>
+                                                            <form
+                                                                action="/delete-post-user/<%= posts._id %>?_method=DELETE"
+                                                                method="POST">
+                                                                <button class="btn-apaga">Apagar</button>
+                                                            </form>
+                                                        </div>
+                                                        <% } %>
+                                    </div>
+                                </ul>
+                                <% } %>
+                                    <% }) %>
+                                        </div> <br>
+
+                                        <!--
+<h3>POSTS:</h3>
+<ul class="publicação-ul">
+    <% postsOrdenados.forEach(posts => { %>
+        <% if (posts.idResposta === data.id) { %>
+            <div style="display: flex;">
+                <img src="<%= posts.imagem %>" class="foto-perfil"> 
+                <div style="flex: 1; padding-left: 20px;">
+                    
+                    <font color="yellow"> &starf; </font>
+                    <b> <%= posts.assinatura %> </b>
+    
+                        <div style="resize:none; padding-bottom: 10%;">
+                            <%= posts.texto %> 
+                        </div>
+                    
+                </div>
+                
+                <% if (idCookie == data._id) { %>
+                    <div>
+                        <form action="/delete-post-user/<%= posts._id %>?_method=DELETE" method="POST">
+                            <button style="background-color: rgb(214, 0, 0);">Apagar</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    <% }) %>
+</ul>
+-->
+
+
+
+
+
+                                        <script>
+                                            function atualizarContador() { //contador de letras dos comentários!
+                                                var input = document.getElementById('texto');
+                                                var contador = document.getElementById('contador');
+                                                var caracteresRestantes = 250 - input.value.length;
+                                                contador.textContent = "Caracteres restantes: " + caracteresRestantes + "/250";
+                                            };
+
+                                            function atualizarCurtidas() {
+                                                var numero = document.getElementById('numeroCurtidas');
+
+                                                numero.textContent = numero + 1;
+                                            }
+
+                                        </script>
+
+                                        <!-- <img src='/img/user.png' class="foto-perfil"> -->
