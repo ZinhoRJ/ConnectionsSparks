@@ -1,7 +1,6 @@
-> [!NOTE]
-> Fork de teste apenas!
-
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![GitHub License](https://img.shields.io/github/license/zinhorj/connectionssparks?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0.en.html)
+[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/connectionssparks)
 
 <picture>
  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ZinhoRJ/ConnectionSparks/blob/main/logotipo_provisorio.png">
@@ -10,19 +9,11 @@
 </picture>
 
 
-# **Connections:Sparks**
+# **Connections: Sparks**
 A proposta consiste de uma rede social simples que busce conectar os usários por meio dos seus interesses de forma prática e intuitiva. Apresentado para a feira de ciências escolar.
   
 ### 🛠️ Feito Com
 A princípio usamos Html, CSS e JavaScript para o frontend, Node.js para o servidor (e diversas bibliotecas npm), além do MongoDB para o banco de dados.
 
 ### 📄 Licença
-Open-Source, sob a GNU License: uso pessoal, comercial e modificações liberadas, sob a regra de não plágio e a permanente gratuidade do software e seus derivados. Leia [LICENSE](https://github.com/ZinhoRJ/ConnectionsSparks/blob/main/LICENSE) para mais informações.
-
-### 🔩 O Plano do Projeto
-- [ ] Produzir uma estrutura do site onde seja possível criar cadastros, perfis, visualizá-los e "conectá-los" entre si;
-
-- [ ] Hostear o site e comprar um domínio, assim como introduzir o projeto para diferentes pessoas afim de prepar uma base de usuários;
-
-- [ ] Apresentar o projeto conforme todos os requisitos e então parar a manutenção e arquivar o repositório.
----
+Código aberto protegido pela Licença Pública Geral Affero GNU: uso pessoal, comercial e modificações liberadas, sob a regra de não plágio e a permanente gratuidade do software e seus derivados. Leia [LICENSE](https://github.com/ZinhoRJ/ConnectionsSparks/blob/main/LICENSE) para mais informações.
