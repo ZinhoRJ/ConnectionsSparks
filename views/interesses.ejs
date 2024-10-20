@@ -1,32 +1,278 @@
+<style>
+    body {
+        background-color: rgb(13, 2, 38);
+        background-image: none;
+    }
+</style>
 
+<!--HEADER DE LOGIN-->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<% if (nameCookie) { %>
+<div style="text-align: center;">
+  <b>LOGIN COMO: </b> 
+  <a href="/post/<%= idCookie %>">
+    <%= nameCookie %> <i class="material-symbols-outlined" style="font-size: 1rem;">north_east</i>
+  </a>
+</div>
+<% } %> 
+<!--HEADER DE LOGIN-->
+
+<h2>SELEÇÃO DE INTERESSES:</h2>
+<p style="font-size: larger;">Seus interesses irão te conectar com os outros usuários do Connections: Sparks. Tenha em mente que eles serão públicos para todos verem!</p>
+
+<p><b>SELECIONE UMA CATEGORIA PARA VER MAIS OPÇÕES</b></p>
 
 <form action="/interesses/<%= data._id %>?method=POST" method="POST">
 
 <div> 
     <input type="checkbox" name="categoria" id="aba" value="Música" onchange="abrir('abaEstilos')"> <label>Música</label> <br>
         <div id="abaEstilos" style="display: none;">
-            -> <input type="checkbox" name="interesses" value="Música Pop"> <label>Pop</label> <br>
-            -> <input type="checkbox" name="interesses" value="Música Eletrônica"> <label>Eletrônica</label> <br>
-            -> <input type="checkbox" name="interesses" value="Rock"> <label>Rock</label> <br>
-            -> <input type="checkbox" name="interesses" value="Metal"> <label>Metal</label> <br>
+            <ul>
+                <li>
+                    <input type="checkbox" name="interesses" value="Rock"> <label>Rock</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Rock"> <label>Metal</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Pop"> <label>Pop</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Hip-Hop"> <label>Hip-Hop</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Jazz"> <label>Jazz</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Clássica"> <label>Clássica</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Eletrônica"> <label>Eletrônica</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Reggae"> <label>Reggae</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Country"> <label>Country</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Blues"> <label>Blues</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Funk"> <label>Funk</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Samba"> <label>Samba</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Bossa Nova"> <label>Bossa Nova</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="MPB"> <label>MPB</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Forró"> <label>Forró</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Pagode"> <label>Pagode</label> <br>
+                </li>
+            </ul>
+            
         </div>
-    
-    <input type="checkbox" name="categoria" id="aba" value="Bandas" onchange="abrir('abaBandas')"> <label>Bandas</label> <br>
-    <div id="abaBandas" style="display: none;">
-        -> <input type="checkbox" name="interesses" value="Tame Impala"> <label>Tame Impala</label> <br>
-        -> <input type="checkbox" name="interesses" value="Daft Punk"> <label>Daft Punk</label> <br>
-        -> <input type="checkbox" name="interesses" value="Metro Boomin"> <label>Metro Boomin</label> <br>
-        -> <input type="checkbox" name="interesses" value="Ghost"> <label>Ghost</label> <br>
-        -> <input type="checkbox" name="interesses" value="Nine Inch Nails"> <label>Nine Inch Nails</label> <br>
-        -> <input type="checkbox" name="interesses" value="System of a Down"> <label>System of a Down</label> <br>
-        -> <input type="checkbox" name="interesses" value="Metallica"> <label>Metallica</label> <br>
-    </div>
         
     <input type="checkbox" name="categoria" id="aba" value="Carros"> <label>Carros</label> <br>
-    <input type="checkbox" name="categoria" id="abaCinema" value="Cinema"> <label>Cinema</label> <br>
-    <input type="checkbox" name="categoria" id="abaJogos" value="Videogames"> <label>Videogames</label> <br>
-    <input type="checkbox" name="categoria" id="abaEsportes" value="Esportes"> <label>Esportes</label> <br>
-</div>
+    <input type="checkbox" name="categoria" id="abaCinema" value="Filmes" onchange="abrir('abaFilmes')"> <label>Filmes</label> <br>
+        <div id="abaFilmes" style="display: none;">
+            <ul>
+                <li>
+                    <input type="checkbox" name="interesses" value="Ação"> <label>Ação</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Aventura"> <label>Aventura</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Comédia"> <label>Comédia</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Drama"> <label>Drama</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Fantasia"> <label>Fantasia</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Ficção Científica"> <label>Ficção Científica</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Terror"> <label>Terror</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Romance"> <label>Romance</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Animação"> <label>Animação</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Documentário"> <label>Documentário</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Musical"> <label>Musical</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Policial"> <label>Policial</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Suspense"> <label>Suspense</label> <br>
+                </li>
+                <li>
+                    <input type="checkbox" name="interesses" value="Faroeste"> <label>Faroeste</label> <br>
+                </li>
+            </ul>
+        </div>
+    <input type="checkbox" name="categoria" id="abaGames" value="Videogames" onchange="abrir('abaJogogos')"> <label>Videogames</label> <br>
+    <div id="abaJogogos" style="display: none;">
+        <ul>
+            <li>
+                <input type="checkbox" name="interesses" value="Ação"> <label>Ação</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Aventura"> <label>Aventura</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="RPG"> <label>RPG</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="FPS"> <label>FPS</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="MOBA"> <label>MOBA</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Simulação"> <label>Simulação</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Estratégia"> <label>Estratégia</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Corrida"> <label>Corrida</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Esporte"> <label>Esporte</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Puzzle"> <label>Puzzle</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Terror"> <label>Terror</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Plataforma"> <label>Plataforma</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="MMORPG"> <label>MMORPG</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Battle Royale"> <label>Battle Royale</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Party Games"> <label>Party Games</label> <br>
+            </li>
+            
+        </ul>
+    </div>
+    <input type="checkbox" name="categoria" id="Esportes" value="Esportes" onchange="abrir('abaEsportes')"> <label>Esportes</label> <br>
+    <div id="abaEsportes" style="display: none;">
+        <ul>
+            <li>
+                <input type="checkbox" name="interesses" value="Futebol"> <label>Futebol</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Basquete"> <label>Basquete</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Vôlei"> <label>Vôlei</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Tênis"> <label>Tênis</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Natação"> <label>Natação</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Atletismo"> <label>Atletismo</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Boxe"> <label>Boxe</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="MMA"> <label>MMA</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Golfe"> <label>Golfe</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Rugby"> <label>Rugby</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Beisebol"> <label>Beisebol</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Futebol Americano"> <label>Futebol Americano</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Hóquei no Gelo"> <label>Hóquei no Gelo</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Ciclismo"> <label>Ciclismo</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Esgrima"> <label>Esgrima</label> <br>
+            </li>
+        </ul>
+    </div>
+
+    <input type="checkbox" name="categoria" id="Signos" value="Signos" onchange="abrir('abaSignos')"> <label>Signos</label> <br>
+    <div id="abaSignos" style="display: none;">
+        <ul>
+            <li>
+                <input type="checkbox" name="interesses" value="Áries"> <label>Áries</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Touro"> <label>Touro</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Gêmeos"> <label>Gêmeos</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Câncer"> <label>Câncer</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Leão"> <label>Leão</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Virgem"> <label>Virgem</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Libra"> <label>Libra</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Escorpião"> <label>Escorpião</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Sagitário"> <label>Sagitário</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Capricórnio"> <label>Capricórnio</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Aquário"> <label>Aquário</label> <br>
+            </li>
+            <li>
+                <input type="checkbox" name="interesses" value="Peixes"> <label>Peixes</label> <br>
+            </li>            
+        </ul>
+    </div>
+</div> <br>
 
 <input type="submit" value="Fim" class="btn">
 

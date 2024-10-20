@@ -9,6 +9,8 @@ const Grupo = require('../models/grupos');
 const Publicacao = require('../models/publicacao')
 const timeFunction = require('../dateFunc');
 const multer = require("multer");
+//const moment = require('moment');
+const moment = require('moment-timezone');
 
 
 // MUITO IMPORTANTE
@@ -51,7 +53,12 @@ const authMiddleware = (req, res, next) => {
 // ROTAS DO SITE
 router.get('/login', async (req, res) => {
     try {
-        res.render('login');
+        const locals = {
+            title: "Login",
+            description: "Login de usuário do Connections: Sparks",
+        }
+
+        res.render('login', {locals});
     } catch (error) {
         console.log(error);
     }
@@ -122,7 +129,12 @@ router.post('/sair', (req, res) => {
 
 router.get('/registro', async (req, res) => {
     try {
-        res.render('registro');
+        const locals = {
+            title: "Criar Conta",
+            description: "Registro de novo usuário do Connections: Sparks",
+        }
+
+        res.render('registro', {locals});
     } catch (error) {
         console.log(error);
     }
@@ -158,7 +170,7 @@ router.post('/registro', async (req, res) => {
 
             res.redirect(`/criar/${user.id}`);
 
-            console.log("[ DBUG ] Usuário Criado: " + user);
+            console.log("[ DBUG ] Usuário Criado: " + user.id);
         } catch (error) {
             if (error.code == 11000) {
                 res.status(409).json({ message: "Usuário já existe" });
@@ -315,7 +327,7 @@ router.post('/grupo/:id', async (req, res) => {
     }
 });
 
-router.post('/salvar-texto', async (req, res) => {
+/* router.post('/salvar-texto', async (req, res) => {
     try {
         const content = req.body;
 
@@ -337,7 +349,7 @@ router.post('/salvar-texto', async (req, res) => {
         res.status(500).json({ error: 'Erro ao salvar o texto' });
 
     }
-});
+}); */
 
 
 // GET
@@ -411,7 +423,7 @@ router.get('/ver-post/:id', async (req, res) => {
         };
 
         //informações puxadas do banco de dados
-        
+
         //const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
         const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]); //vai salvar os comentários numa ordem Ascendente e permitir mostrá-los corretamente
 
@@ -480,9 +492,9 @@ router.get('', async (req, res) => { // não estamos usando "app.get" pois nesse
 
         const publicacoesOrdenadas = await Publicacao.aggregate([{ $sort: { createdAt: -1 } }]).limit(3);
         const comentariosOrdenados = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]).limit(5);
-        
+
         const grupos = await Grupo.aggregate([{ $sort: { createdAt: -1 } }]);
-        
+
         const postsOrdenados = await Posts.aggregate([{ $sort: { createdAt: -1 } }]).limit(7);
 
         const nomeCookie = req.cookies.name;
@@ -534,7 +546,7 @@ router.get('/criar/:id', async (req, res) => {
             locals, data, nameCookie
         });
 
-        console.log('[ DBUG ] Criando perfil de ' + nameCookie);
+        console.log('[ DBUG ] Criando perfil de ' + req.cookies.userid);
 
     } catch (error) {
         console.log(`!!! ERRO NA EXECUÇÃO DA QUERY DE PERFIL: (${error})`)
@@ -553,8 +565,13 @@ router.post('/criar/:id', upload.single('image'), async (req, res) => {
             updatedAt: Date.now()
         });
 
+        const user = await Perfil.findOne({ _id: req.params.id });
+
         //salva o cookie "name" equivalente ao email do usuário
         res.cookie("name", req.body.title, { httpOnly: true });
+
+        //salva o cookie "pfp" equivalente a foto de perfil do usuário
+        res.cookie("pfp", user.imagem, { httpOnly: true });
 
         res.redirect(`/interesses/${req.params.id}`);
     } catch (error) {
@@ -580,7 +597,11 @@ router.get("/post/:id", async (req, res) => {
         const nameCookie = req.cookies.name;
         const tokenCookie = req.cookies.token;
 
-        console.log(idCookie)
+        // ajustar fuso horário para exibir a data de nascimento corretamente
+        let localDate = moment.utc(data.nascimento).tz('America/Sao_Paulo', true);
+        const localDateFormatted = localDate.format('DD/MM/YYYY');
+        //antes ele estava mostrando o dia errado (1 dia antes) e dessa forma: 2007-11-23T00:00:00.000Z
+        //agora ela está formatada corretamente.
 
         const locals = {
             title: data.title,
@@ -588,7 +609,7 @@ router.get("/post/:id", async (req, res) => {
             currentRoute: `/post/${slug}`, //n entendi pra que serve, não me pergunte ¯\_(ツ)_/¯
         }
 
-        res.render('perfil', { locals, data, posts, slug, postsOrdenados, tagsFormatadas, idCookie, nameCookie, pfpCookie, tokenCookie });
+        res.render('perfil', { locals, data, localDateFormatted, posts, slug, postsOrdenados, tagsFormatadas, idCookie, nameCookie, pfpCookie, tokenCookie, });
     }
     catch (error) {
         console.log(error);
@@ -630,9 +651,14 @@ router.get('/interesses/:id', async (req, res) => {
 
         const data = await Perfil.findOne({ _id: req.params.id });
 
+        const nameCookie = req.cookies.name;
+        const idCookie = req.cookies.userid;
+
         res.render('interesses', {
             locals,
-            data
+            data,
+            nameCookie,
+            idCookie
         });
     }
     catch (error) {
@@ -690,19 +716,23 @@ router.get('/verify/:id', async (req, res) => {
             };
         });
 
-        console.log(perfisVerificados);
 
         const locals = {
             title: data.title,
             description: "Perfil",
             currentRoute: `/post/${slug}`
-        }
+        };
+
+        const nameCookie = req.cookies.name;
+        const idCookie = req.cookies.userid;
 
         res.render('constelacao', {
             locals,
             data,
             data2,
-            perfisVerificados
+            perfisVerificados,
+            nameCookie,
+            idCookie
         });
     } catch (error) {
         console.log(error);
@@ -763,7 +793,14 @@ router.get("/about", async (req, res) => {
 });
 
 router.get("/contact", async (req, res) => {
-    res.render('contato');
+    const locals = {
+        title: "Contato",
+        description: "Informações de contato.",
+    };
+
+    res.render('contato', {
+        locals
+    });
     console.log('[ INFO ] acessou contato às ' + currentDate.timeNow());
 });
 

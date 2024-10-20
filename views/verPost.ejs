@@ -16,6 +16,17 @@
     <p style="font-size:x-large;">
         <%= post.texto %>
     </p> <br>
+
+    <div style="display: flex;">
+        <% if (!post.likes.includes(idCookie)) { %>
+        
+            <form action="/curtir-post/<%= post._id %>?_method=POST" method="POST" style="margin-left: 1%; margin-right: 6ch;">
+                <button class="btn-comentar" style="margin-left: 0%;">CURTIR</button>
+                
+            </form>
+        <% } %>
+        <font color="yellow"> &starf; </font> Curtidas: <%= post.likes.length %>
+    </div>
 </div>
 
 

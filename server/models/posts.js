@@ -24,6 +24,10 @@ const Post = new Schema({
     },
     idAutor: {
         type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 

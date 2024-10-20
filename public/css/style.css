@@ -87,6 +87,21 @@ textarea {
   background-image: linear-gradient(#ff000d, #b10009);
 }
 
+.btn-descurtir {
+  background-color: var(--purple);
+  background: none;
+  color: white; /* Cor do texto */
+  border: 1.9px solid; /* Remover borda */
+  border-color: #7700a7;
+  text-align: center; /* Alinhamento do texto */
+  text-decoration: none; /* Remover sublinhado */
+  display: inline-block; /* Exibir como bloco em linha */
+  font-size: 16px; /* Tamanho da fonte */
+  transition: transform 0.1s ease; /* Transição suave */
+  cursor: pointer; /* Mostrar cursor de ponteiro */
+  border-radius: 5px;
+  padding: 5px 10px;
+}
 
 img {
   width: 100%;
@@ -126,6 +141,7 @@ margin-top: 2%;
   "menu menu";
   padding-top: 30px;
   margin-top: -6%;
+
 }
 
 @media only screen and (min-width: 768px) {
@@ -503,6 +519,7 @@ margin-top: 2%;
   position: absolute;
   animation: twinkle 2s infinite;
   box-shadow: 0px 0px 10px rgb(255, 255, 255);
+  z-index: -1;
 }
 .star-overlay {
   position: fixed; /* Fixa o fundo de estrelas */
@@ -518,6 +535,7 @@ margin-top: 2%;
   opacity: 0.7; /* Ajustar a transparência se desejar */
   position: absolute;
   }
+  
   .checkbox-container {
     margin: 100px 0px;
     display: flex;
@@ -593,7 +611,7 @@ margin-top: 2%;
 .form-input[type="text"],
 .form-input[type="password"],
 .form-input[type="submit"] {
-  width: 160%; /* Faz com que os campos ocupem toda a largura do contêiner */
+  width: 10%; /* Faz com que os campos ocupem toda a largura do contêiner */
   padding: 10px; /* Adiciona espaçamento interno aos campos */
   margin: 10px 0; /* Espaçamento entre os campos */
   border: 1px solid #ccc; /* Borda padrão */
@@ -779,19 +797,22 @@ margin-left: -1025%;
   padding: 60px; /* Espaçamento interno */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para dar efeito de elevação */
   
-  width: 350px; /* Largura padrão inicial, você pode ajustar isso */
+  width: 500px; /* Largura padrão inicial, você pode ajustar isso */
   min-width: 200px; /* Largura mínima */
-  max-width: 500px; /* Largura máxima */
-  margin-top: -30%;
+  max-width: 600px; /* Largura máxima */
+  margin-top: -33%;
   margin-left: -2%;
   min-height: 150px
+  
+
+  
 }
 
 .article {
   margin: 0; /* Remover margens padrão */
   color: #ffffff; /* Cor do texto */
   font-size: 32px; /* Tamanho da fonte */
-  margin-top: -41%;
+  margin-top: -30%;
   margin-right: 10%;
   margin-left: -39%;
 }
@@ -807,9 +828,9 @@ margin-left: -1025%;
   cursor: pointer; 
   border-radius: 10px;
   box-shadow: #7700a7;
-  margin-top: -42%;
+  margin-top: -41%;
   margin-left: 130%;
-  
+  padding-bottom: -5%;
 }
 
 

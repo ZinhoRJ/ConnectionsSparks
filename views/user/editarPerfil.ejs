@@ -1,6 +1,30 @@
+<style>
+    .btn-aqui {
+        background-color: var(--purple);
+        background-image: linear-gradient(#cf57ff, #7700a7);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        transition: transform 0.1s ease;
+        cursor: pointer;
+        border-radius: 10px;
+        margin-left: 20px;
+    }
+</style>
+
 <a href="/post/<%= data._id %>">&larr; Voltar</a>
 <div class="admin-title">
     <h2>Editar Perfil</h2>
+
+    <div style="display: flex;">
+        <a href="/interesses/<%= data.id %>" class="btn-aqui" style="margin-left: 20px">EDITAR TAGS</a>
+        <a href="/pfp/<%= data.id %>" class="btn-aqui">EDITAR FOTO DE PERFIL</a>
+    </div>
+
 
     <form action="/delete-post/<%= data._id %>?_method=DELETE" method="POST">
         <input type="submit" value="Apagar Perfil" class="btn-delete btn">
@@ -15,7 +39,7 @@
     <textarea name="body" coLs="50" rows="10"><%= data.body %></textarea>
 
     <label for="insta"><b>Instagram</b></label>
-    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>" onkeypress="return lettersOnly(event);">
+    <input type="text" placeholder="@fulano" name="insta" value="<%= data.insta %>" id="instagram">
 
     <label for="insta"><b>Sexo</b></label>
     <input type="text" placeholder="-" name="sexo" value="<%= data.sexo %>">
@@ -23,23 +47,23 @@
     <input type="submit" value="Atualizar Perfil" class="btn">
 
     <p>
-        O perfil está registrado no e-mail: <b><%= data.email %></b>
+        O perfil está registrado no e-mail: <b>
+            <%= data.email %>
+        </b>
     </p>
 </form>
 
 
 <script>
-    function lettersOnly(evt) {
-    evt = (evt) ? evt : event;
-    var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
-        ((evt.which) ? evt.which : 0));
-    if (charCode > 31 && (charCode < 48 || charCode > 57) &&
-        (charCode < 65 || charCode > 90) &&
-        (charCode < 97 || charCode > 122)) {
-        //alert("Não é necessário adicionar o símbolo do @."); //não gostei do alert pq ele cria um popup na tela!
-        event.preventDefault(); //esse só vai não adicionar o @ e ficar quieto
-        return false;
-    }
-    return true;
-};
+    document.getElementById('instagram').addEventListener('keypress', function (event) {
+        // Obtenha o código da tecla pressionada
+        var charCode = event.charCode || event.keyCode;
+        // Converta o código da tecla para um caractere
+        var charStr = String.fromCharCode(charCode);
+        // Verifique se o caractere é o símbolo de arroba (@)
+        if (charStr === '@') {
+            // Impedir a entrada do caractere
+            event.preventDefault();
+        }
+    });
 </script>

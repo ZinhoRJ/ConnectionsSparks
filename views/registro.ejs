@@ -1,52 +1,117 @@
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-
-<div class="form-container2">
-   
-            
-    <form action="/registro" method="POST">
-        <label for="email"><b>Usuário</b></label>
-        <input type="text" placeholder="Não é necessário usar seu e-mail verdadeiro" name="email"  class="form-input">
-
-        <label for="senha"><b>Senha</b></label>
-        <input type="password" placeholder="Digite sua senha" name="senha"  class="form-input">
-
-        <button type="submit" class="btn-Login" style="align-self: center; margin-top: 5%;">COMEÇAR</button>
-    </form>
-</div>
-
-
 <style>
-    body{
+    body {
         background-position: 1100px 200px;
     }
+
+    body-here {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50vh;
+        /* Ajuste conforme necessário */
+        margin: 0px;
+    }
+
+
+    .container-form {
+        background-color: none;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        height: 220px;
+        width: 500px;
+    }
+
+    .btn-entrar {
+        margin-top: 0%;
+        background-color: var(--purple);
+        background-image: linear-gradient(#cf57ff, #7700a7);
+        color: white;
+        /* Cor do texto */
+        border: none;
+        /* Remover borda */
+        padding: 10px 50px;
+        /* Espaçamento interno */
+        text-align: center;
+        /* Alinhamento do texto */
+        text-decoration: none;
+        /* Remover sublinhado */
+        display: inline-block;
+        font-size: 16px;
+        transition: transform 0.1s ease;
+        cursor: pointer;
+        border-radius: 10px;
+        box-shadow: #7700a7;
+    }
+
+    .btn-entrar:hover {
+        transform: translateY(2px);
+        /* Abaixar 2 pixels */
+    }
+
+    .form-inputs {
+        width: 180%;
+        /* Faz com que os campos ocupem toda a largura do contêiner */
+        padding: 10px;
+        /* Adiciona espaçamento interno aos campos */
+        margin: 10px 0;
+        /* Espaçamento entre os campos */
+        border: 1px solid #ccc;
+        /* Borda padrão */
+        border-radius: 5px;
+        /* Cantos arredondados */
+    }
+
+    #emailError {
+        color: red;
+        display: none;
+    }
 </style>
-<div class="star" style="top: 56%; left: 25%;"></div>
-<div class="star" style="top: 24%; left: 68%;"></div>
-<div class="star" style="top: 74%; left: 42%;"></div>
-<div class="star" style="top: 16%; left: 20%;"></div>
-<div class="star" style="top: 37%; left: 40%;"></div>
-<div class="star" style="top: 11%; left: 60%;"></div>
-<div class="star" style="top: 10%; left: 22%;"></div>
-<div class="star" style="top: 7%; left: 95%;"></div>
-<div class="star" style="top: 50%; left: 54%;"></div>
-<div class="star" style="top: 15%; left: 90%;"></div>
-<div class="star" style="top: 30%; left: 10%;"></div>
-<div class="star" style="top: 80%; left: 10%;"></div>
-<div class="star" style="top: 80%; left: 60%;"></div>
-<div class="star" style="top: 12%; left: 34%;"></div>
-<div class="star" style="top: 67%; left: 22%;"></div>
-<div class="star" style="top: 58%; left: 75%;"></div>
-<div class="star" style="top: 9%; left: 49%;"></div>
-<div class="star" style="top: 45%; left: 37%;"></div>
-<div class="star" style="top: 21%; left: 83%;"></div>
-<div class="star" style="top: 4%; left: 12%;"></div>
-<div class="star" style="top: 33%; left: 88%;"></div>
-<div class="star" style="top: 78%; left: 56%;"></div>
-<div class="star" style="top: 25%; left: 92%;"></div>
-<div class="star" style="top: 68%; left: 8%;"></div>
-<div class="star" style="top: 77%; left: 39%;"></div>
-<div class="star" style="top: 83%; left: 69%;"></div>
+
+<h3 style="text-align: center; margin-bottom: -20px;">CRIAR CONTA:</h3>
+<body-here>
+    <div class="container-form">
+        <form action="/registro" method="POST" id="formulario" autocomplete="off">
+            <label for="email">E-mail:</label>
+            <input type="text" id="email" name="email" required class="form-inputs" placeholder="Não é necessário usar seu e-mail verdadeiro">
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required class="form-inputs" placeholder="Digite sua senha">
+
+            <small id="emailError" style="margin: 5px;"></small>
+
+            <div style="display: flex;
+            justify-content: center;
+            align-items: center;">
+                <button type="submit" class="btn-entrar">Iniciar</button>
+            </div>
+
+        </form>
+    </div>
+</body-here>
+
+<script>
+    const form = document.getElementById('formulario');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
 
 
-</body>
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const email = emailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'Por favor, insira um endereço de email válido.';
+            emailError.style.display = 'block';
+            emailInput.classList.add('invalid');
+        } else {
+            emailError.textContent = '';
+            emailInput.classList.remove('invalid');
+            // Aqui você pode adicionar a lógica para enviar os dados do formulário
+            //console.log('Email válido:', email);
+            form.submit();
+        }
+    });
+</script>

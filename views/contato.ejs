@@ -1,46 +1,144 @@
- <style>
+<style>
     body {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--gray-light);
-    font-size: var(--font-size-base);
-    background-color: rgb(13, 2, 38);
-    background-image: url("/img/img-noise-361x370.png");
-    margin: 0;
-    background-image: url('https://cdn.dribbble.com/users/518045/screenshots/15443059/media/d3899c81930930b16696c029a0fa613b.png?resize=800x600&vertical=cente');
-    background-repeat: no-repeat;
-    background-position: 900px 125px; /* 20px da esquerda e 50px do topo */
-  } 
- </style>
+        font-family: 'Montserrat', sans-serif;
+        color: var(--gray-light);
+        font-size: var(--font-size-base);
+        background-color: rgb(13, 2, 38);
+        margin: 0;
+        background-image: none;
+        background-repeat: no-repeat;
+        background-position: 900px 125px;
+        background-image: url('https://cdn.dribbble.com/users/518045/screenshots/15443059/media/d3899c81930930b16696c029a0fa613b.png?resize=800x600&vertical=cente');
+        /* 20px da esquerda e 50px do topo */
+
+    }
+
+    .contact-info {
+
+        color: var(--gray-light);
+        /* Cor do texto */
+        padding: 10px;
+        /* Espaçamento interno */
+        border-radius: var(--border-radius);
+        /* Borda arredondada */
+        margin: 20px auto;
+        /* Margem superior e inferior, centralizado horizontalmente */
+        max-width: 600px;
+        /* Largura máxima da seção */
+        text-align: left;
+        /* Centraliza o texto */
+        margin-right: 50%;
+    }
+
+    .contact-info h2 {
+        font-size: var(--font-size-lg);
+        /* Tamanho da fonte do título */
+        margin-bottom: 10px;
+        /* Espaçamento abaixo do título */
+    }
+
+    .contact-info ul {
+        list-style-type: none;
+        /* Remove os marcadores da lista */
+        padding: 0;
+        /* Remove o preenchimento da lista */
+        margin: 0;
+        /* Remove a margem da lista */
+
+
+    }
+
+    .contact-info ul li {
+        margin: 50px 0;
+        /* Margem superior e inferior para cada item */
+        font-size: 200%;
+        /* Tamanho da fonte */
+        margin-left: 24%;
+        color: #ffffff;
+    }
+
+    .contact-info p {
+        margin-top: 40px;
+        /* Margem superior para o parágrafo do Instagram */
+        font-size: 190%;
+        margin-left: 5%;
+    }
+
+    .instagram-link {
+        color: #ab0bb9;
+        /* Cor do texto do link do Instagram */
+        text-decoration: none;
+        /* Remove o sublinhado do link */
+        font-weight: bold;
+        /* Negrito para destacar o link */
+        margin-left: 10%;
+
+    }
+
+    .instagram-link:hover {
+        text-decoration: underline;
+        /* Sublinhado no hover */
+
+    }
+
+    .instagram-link-container {
+
+        margin-top: 300px;
+        /* Espaçamento superior entre o texto e o link */
+    }
+
+    @keyframes twinkle {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0, 5;
+        }
+    }
+</style>
 
 
 
-        <section class="contact-info">
-            <h1>Contate a gente</h1>
-            <ul>
-                <li>(21) 99060-5562</li>
-                <li>(21) 95902-6108</li>
-                <li>(21) 98733-0432</li>
+<section class="contact-info">
+    <h2>Contate a gente</h2>
+    <ul>
+        <p>Telefones de contato:</p>
+        <li>(21) 99060-5562</li>
+        <li>(21) 95902-6108</li>
+        <li>(21) 98733-0432</li>
+
+        <p>
+            E-mail:
+            <span class="instagram-link-container" style="color:blueviolet">
+                <a href="mailto:connectionssparks@gmail.com?" target="_blank"
+                    class="instagram-link">connectionssparks@gmail.com</a>
+            </span>
+        </p>
+
+        <p>
+            Estamos disponíveis também pelo Instagram:
+            <span class="instagram-link-container" style="color:blueviolet">
+                <a href="https://www.instagram.com/connectionssparks/" target="_blank"
+                    class="instagram-link">@connectionssparks</a>
+            </span>
+        </p>
+
+</section>
 
 
-                <p>
-                    Também temos o nosso Instagram
-                    <span class="instagram-link-container">
-                        <a href="https://www.instagram.com/connectionssparks/" target="_blank"
-                            class="instagram-link">@connectionssparks</a>
-                    </span>
-                </p>
-
-    </section>
-    <div class="star" style="top: 56%; left: 25%;"></div>
-    <div class="star" style="top: 24%; left: 68%;"></div>
-    <div class="star" style="top: 74%; left: 42%;"></div>
-    <div class="star" style="top: 16%; left: 20%;"></div>
-    <div class="star" style="top: 34%; left: 40%;"></div>
-    <div class="star" style="top: 11%; left: 60%;"></div>
-    <div class="star" style="top: 10%; left: 22%;"></div>
-    <div class="star" style="top: 3%; left: 95%;"></div>
-    <div class="star" style="top: 50%; left: 54%;"></div>
-    <div class="star" style="top: 15%; left: 90%;"></div>
-    <div class="star" style="top: 30%; left: 10%;"></div>
-    <div class="star" style="top: 80%; left: 10%;"></div>
-    <div class="star" style="top: 80%; left: 60%;"></div>
+<div class="star" style="top: 56%; left: 25%;"></div>
+<div class="star" style="top: 24%; left: 68%;"></div>
+<div class="star" style="top: 74%; left: 42%;"></div>
+<div class="star" style="top: 16%; left: 20%;"></div>
+<div class="star" style="top: 34%; left: 40%;"></div>
+<div class="star" style="top: 11%; left: 60%;"></div>
+<div class="star" style="top: 10%; left: 22%;"></div>
+<div class="star" style="top: 3%; left: 95%;"></div>
+<div class="star" style="top: 50%; left: 54%;"></div>
+<div class="star" style="top: 15%; left: 90%;"></div>
+<div class="star" style="top: 30%; left: 10%;"></div>
+<div class="star" style="top: 80%; left: 10%;"></div>
+<div class="star" style="top: 80%; left: 60%;"></div>

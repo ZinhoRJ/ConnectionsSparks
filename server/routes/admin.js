@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Perfil = require("../models/perfil");
+const Posts = require("../models/posts");
 const Admin = require("../models/admins");
 const Comentario = require("../models/comentarios");
 const Grupo = require("../models/grupos");
@@ -91,10 +92,15 @@ router.get("/dashboard", authMiddleware, async (req, res) => {
 
         const data = await Perfil.aggregate([{ $sort: { createdAt: -1 } }]); //pega os perfis no banco de dados e salva na variável data
         const grupos = await Grupo.aggregate([{ $sort: { createdAt: -1 } }]); //pega os grupos no banco de dados e salva na variável grupos
+        const posts = await Posts.aggregate([{ $sort: { createdAt: -1 } }]);
+        const publicacoes = await Publicacao.aggregate([{ $sort: { createdAt: -1 } }]);
+
         res.render("admin/dashboard", {
             locals,
             data,
             grupos,
+            posts,
+            publicacoes,
             layout: adminLayout
         });
     } catch (error) {
@@ -198,8 +204,8 @@ router.get('/edit-post/:id', authMiddleware, async (req, res) => {
         };
 
         const data = await Perfil.findOne({ _id: req.params.id });
-        const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
-        const comentarios2 = await Comentario.aggregate([{ $sort: { createdAt: -1 } }]); //variável que vai listar os comentários no banco de dados
+        const comentarios = await Posts.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
+        const comentarios2 = await Posts.aggregate([{ $sort: { createdAt: -1 } }]); //variável que vai listar os comentários no banco de dados
 
         res.render('admin/edit-post', {
             locals,
@@ -317,6 +323,20 @@ router.delete('/deletar-comentario/:id', authMiddleware, async (req, res) => {
         console.log(error);
     }
 });
+
+// DELETE
+// Deletar post
+router.delete('/delete-post-admin/:id', authMiddleware, async (req, res) => {
+    try {
+        //const post = await Posts.findById({ _id: req.params.id });
+
+        await Posts.deleteOne( { _id: req.params.id } );
+        res.redirect("back");
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 
 /**
  * GET /

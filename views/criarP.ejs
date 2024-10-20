@@ -1,6 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<h1>Criar Perfil</h1>
+<h2>CRIAR PERFIL:</h2>
 <!-- <div>
     <img id="previewImage" src="/img/user.png" class="foto-perfil">
     <form id="uploadForm" enctype="multipart/form-data">
@@ -10,7 +10,7 @@
 </div> <br> -->
 
 <form id="formulario" action="/criar/<%= data._id %>?method=POST" method="POST" autocomplete="off" enctype="multipart/form-data">    
-    <h2>Para o usuário: <%= nameCookie %></h2>
+  <p>Essas informações serão públicas.</p>
   
     <label for="title">Nome</label>
     <input type="text" id="username" name="title" required>
@@ -25,7 +25,7 @@
     </select>
 
     <label for="insta">Usuário do Instagram</label> <font color="grey">(opcional)</font>
-    <input type="text" id="instagram" placeholder="Não é necessário digitar o símbolo de arroba (@)" name="insta" onkeypress="return lettersOnly(event);">
+    <input type="text" id="instagram" placeholder="Não é necessário digitar o símbolo de arroba (@)" name="insta">
      
     <label for="body"><b>Biografia Aqui</b></label>
     <textarea name="body" coLs="50" rows="10"></textarea>
@@ -59,9 +59,9 @@
     });
   }); */
 
-
-
-function lettersOnly(evt) {
+  //evento da função abaixo:
+  //onkeypress="return lettersOnly(event);"
+/* function lettersOnly(evt) {
     evt = (evt) ? evt : event;
     var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode :
         ((evt.which) ? evt.which : 0));
@@ -73,5 +73,17 @@ function lettersOnly(evt) {
         return false;
     }
     return true;
-};
+}; */
+
+document.getElementById('instagram').addEventListener('keypress', function(event) {
+    // Obtenha o código da tecla pressionada
+    var charCode = event.charCode || event.keyCode;
+    // Converta o código da tecla para um caractere
+    var charStr = String.fromCharCode(charCode);
+    // Verifique se o caractere é o símbolo de arroba (@)
+    if (charStr === '@') {
+        // Impedir a entrada do caractere
+        event.preventDefault();
+    }
+});
 </script>

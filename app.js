@@ -67,6 +67,7 @@ Date.prototype.timeNow = function () {
     return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
 }
 
+
 app.listen(PORT, () => { //inicia o servidor como web app, usando o express!
     console.log('[ \x1b[32m OK \x1b[0m ] ' + `Servidor aberto na Porta ${PORT}`);
     console.log(`[ \x1b[32m OK \x1b[0m ] Uptime since: ` + currentDate.timeNow());

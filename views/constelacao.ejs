@@ -1,3 +1,24 @@
+<style>
+  body {
+      background-color: rgb(13, 2, 38);
+      background-image: none;
+  }
+</style>
+
+<!--HEADER DE LOGIN-->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<% if (nameCookie) { %>
+<div style="text-align: center;">
+  <b>LOGIN COMO: </b> 
+  <a href="/post/<%= idCookie %>">
+    <%= nameCookie %> <i class="material-symbols-outlined" style="font-size: 1rem;">north_east</i>
+  </a>
+</div>
+<% } %> 
+<!--HEADER DE LOGIN-->
+
+
 <h1>Constelação de <%= data.title %></h1>
 <h3>Aqui você vê todas as conexões que você tem com os outros Sparks!</h2>
 

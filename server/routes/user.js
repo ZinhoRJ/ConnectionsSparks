@@ -45,9 +45,11 @@ router.get('/pfp/:id', async (req, res) => {
         }
 
         const data = await Perfil.findOne({ _id: req.params.id });
+        const idCookie = req.cookies.userid;
+        const nameCookie = req.cookies.userid;
 
         res.render('criarImagem', {
-            locals, data
+            locals, data, idCookie, nameCookie
         });
     } catch (error) {
         console.log(error);
@@ -62,17 +64,31 @@ router.post('/pfp/:id', upload.single('image'), async (req, res) => {
             imagem: "/uploads/" + req.file.filename
         });
 
-        const img = "/uploads/" + req.file.filename;
+        const user = await Perfil.findById({ _id: req.params.id });
 
-        console.log(img);
+        const eita = user.imagem;
+        console.log(eita);
 
-        //salva o cookie "pfp" equivalente a foto de perfil do usuário
-        res.cookie("pfp", img, { httpOnly: true });
+        if (!req.file.filename){
+            res.cookie("pfp", eita, { httpOnly: true });
+        } else {
+            const img = req.body.imageUrl;
+            res.cookie("pfp", eita, { httpOnly: true });
+        }
+
+        
+
+        /* try {
+            //salva o cookie "pfp" equivalente a foto de perfil do usuário
+            res.cookie("pfp", img, { httpOnly: true });
+        } catch (error) {
+            console.log(error);
+        } */
+        
 
         // O arquivo está em req.file
         //console.log(req.file); // Exibe informações sobre o arquivo
         res.send({ filename: req.file.filename });
-
     } catch (error) {
         console.log(error);
     };
@@ -91,7 +107,7 @@ router.get('/editar-perfil/:id', authMiddleware, async (req, res) => {
         const locals = {
         title: "Editar Perfil",
         description: "Paínel de opções do usuário",
-      };
+        };
   
       const data = await Perfil.findOne({ _id: req.params.id }); //variável para procurar as informações do perfil no banco de dados
       const comentarios = await Comentario.findById({ _id: req.params.id }); //variável que vai procurar os comentários no banco de dados
@@ -166,6 +182,26 @@ router.post('/curtir-post/:id', authMiddleware, async (req, res) => {
 });
 
 // POST
+// Des-curtir Comentários
+router.post('/descurtir-post/:id', authMiddleware, async (req, res) => {
+    try {
+        const post = await Posts.findById({ _id: req.params.id });
+        const userId = req.cookies.userid;
+
+        if (post.likes.includes(userId)) {
+            post.likes.pull(userId);
+            await post.save();
+            
+            res.redirect('back');
+        } else {
+            res.status(400).json({ message: 'Você não curtiu esse post.' });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST
 // Curtir Perfil
 router.post('/curtir/:id', authMiddleware, async (req, res) => {
     try {
@@ -179,6 +215,26 @@ router.post('/curtir/:id', authMiddleware, async (req, res) => {
             res.redirect('back');
         } else {
             res.status(400).json({ message: 'O perfil já fui curtido pelo usuário.' });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// POST
+// Des-curtir Perfil
+router.post('/descurtir-perfil/:id', authMiddleware, async (req, res) => {
+    try {
+        const perfil = await Perfil.findById({ _id: req.params.id });
+        const userId = req.cookies.userid;
+
+        if (perfil.curtidas.includes(userId)) {
+            perfil.curtidas.pull(userId);
+            await perfil.save();
+            
+            res.redirect('back');
+        } else {
+            res.status(400).json({ message: 'Você não curtiu esse perfil.' });
         }
     } catch (error) {
         console.log(error);
